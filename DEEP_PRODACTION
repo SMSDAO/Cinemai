@@ -1,0 +1,268 @@
+High-level feature merge
+
+Area	CinemAi Neo (yours)	Short.ai-style add-ons	
+Input	Photo, script, production packs	Hooks, ideas, templates, auto-script	
+Output	Cinematic videos	Short-form cuts, variants, captions, formats	
+Growth	None yet	Multi-platform posting, scheduling, analytics	
+Monetization	Trips + Pro	Same, plus “Creator Pro” angle	
+
+
+---
+
+1. New feature layer: “Shorts mode”
+
+Alongside Simple and Pro, add:
+
+• Shorts mode:• Input options:• Text idea → “Write me a script for…”
+• Long script → auto-cut into multiple shorts.
+• Existing video → auto-cut best moments.
+
+• AI does:• Generates hook-first scripts.
+• Suggests 3–5 variants per idea.
+• Auto-adds captions, emojis, on-screen text.
+
+• Output formats:• 9:16 (TikTok/Reels/Shorts).
+• 1:1 (feed).
+• 16:9 (YouTube).
+
+
+
+
+So app has 3 entry points:
+
+• Photo + Script (Cinematic)
+• Production Pack (Pro)
+• Shorts (Growth)
+
+
+---
+
+2. Social + distribution features
+
+Add a “Publish” layer on top of productions:
+
+• Connected accounts:• TikTok, Instagram, YouTube, X, etc. (via OAuth).
+
+• Per production:• Toggle: “Create short-form versions from this production”.
+• Auto-generate:• Clips with captions.
+• Suggested titles, descriptions, hashtags.
+
+
+• Scheduling:• User picks:• Platforms.
+• Time slots.
+
+• Queue stored in your backend, posted via background workers.
+
+
+
+On mobile:
+
+• After a video is Ready:• Show button: “Create Shorts & Publish”.
+• Wizard:• Choose platforms.
+• Edit captions.
+• Schedule or post now.
+
+
+
+
+---
+
+3. Extended data model for Short.ai-style features
+
+Add a few tables.
+
+Shorts & variants
+
+• shorts• id
+• production_id
+• user_id
+• source_type (cinema, upload, script_only)
+• status (draft, queued, processing, ready)
+• main_video_url
+• created_at
+
+• short_variants• id
+• short_id
+• hook_text
+• caption_text
+• hashtags
+• format (9_16, 1_1, 16_9)
+• video_url
+• performance_score (nullable, from analytics)
+• created_at
+
+
+
+Social connections & posts
+
+• social_accounts• id
+• user_id
+• platform (tiktok, instagram, youtube, x, etc.)
+• handle
+• access_token_encrypted
+• refresh_token_encrypted
+• expires_at
+• created_at
+
+• social_posts• id
+• user_id
+• short_variant_id
+• platform
+• status (scheduled, posted, failed)
+• scheduled_at
+• posted_at
+• platform_post_id
+• created_at
+
+
+
+Analytics
+
+• social_metrics• id
+• social_post_id
+• views
+• likes
+• comments
+• shares
+• watch_time_seconds
+• collected_at
+
+
+
+This lets you:
+
+• Show per-variant performance.
+• Suggest: “This hook style works best for you.”
+
+
+---
+
+4. UX additions for Short.ai-style power
+
+On Home
+
+• Add a “Growth” section:• “This week’s posts”
+• “Best performing short”
+• “Suggested new hooks”
+
+
+
+New screens
+
+• Shorts dashboard• List of shorts grouped by:• Draft, Scheduled, Live.
+
+• Each card shows:• Thumbnail.
+• Platforms.
+• Key metrics.
+
+
+• Hook lab• User enters:• Niche, tone, target audience.
+
+• AI generates:• Hook ideas.
+• Full scripts.
+• Option: “Turn into short now”.
+
+
+• Brand kit• User sets:• Colors.
+• Fonts (or font style).
+• Logo.
+• Lower-third style.
+
+• AI applies this to:• Captions.
+• Overlays.
+• Thumbnails.
+
+
+
+
+---
+
+5. AI pipeline extension for shorts
+
+On top of your cinema pipeline, add a shorts pipeline:
+
+1. Idea/script generation• From user prompt or long script.
+• Generate multiple hook-first scripts.
+
+2. Shot planning• For each script:• Decide if it’s:• Talking head.
+• B-roll heavy.
+• Mixed.
+
+
+
+3. Visual generation• If user has a photo/avatar:• Use it as anchor.
+
+• Else:• Generate stylized visuals (Neo Glow, etc.).
+
+
+4. Caption & layout• Auto-generate:• Word-perfect captions.
+• Emphasis with emojis, bold words (visually).
+
+• Place them in safe zones for each platform.
+
+5. Export & variants• Render multiple aspect ratios.
+• Attach suggested titles, descriptions, hashtags.
+
+6. Publish & learn• Post via connected accounts.
+• Pull metrics.
+• Update performance_score.
+• Feed back into “Hook lab” suggestions.
+
+
+
+---
+
+6. Pricing with Short.ai-style value
+
+Your existing model still works, just add Shorts framing:
+
+• Free:• X cinema productions/month.
+• Y shorts/month.
+• Limited platforms, no scheduling.
+
+• Pro ($49/month):• More cinema productions.
+• More shorts (e.g. 100–300/month).
+• Scheduling + multi-platform posting.
+• Brand kit.
+• Analytics.
+
+• $1 Trip:• 1 cinema production or
+• A bundle of shorts (e.g. up to 5 variants from one idea).
+
+
+
+You can later split into:
+
+• CinemAi Pro (cinema-focused).
+• Creator Pro (shorts + growth).
+• Or keep it unified but message it differently.
+
+
+---
+
+7. Neo Glow UI with growth layer
+
+Keep the same Neo Glow aesthetic, but:
+
+• Growth cards:• Neon borders showing platform colors subtly.
+• Tiny metrics row: views, likes, watch time.
+
+• Hook lab:• Terminal-like panel with glowing cursor.
+• Generated hooks appear as stacked cards you can swipe through.
+
+
+
+---
+
+8. How this is now “beyond CinemAi + Short.ai”
+
+You’re combining:
+
+• Deep production (multi-folder, contracts, code, assets).
+• Cinematic output (full productions).
+• Short-form growth engine (hooks, shorts, scheduling, analytics).
+
+
+So the story becomes:
+
+“Upload your world once—get full cinematic pieces and an ongoing stream of optimized shorts that auto-grow your channels.”
