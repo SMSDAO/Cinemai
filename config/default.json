@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "CinemAi Neo",
+    "version": "1.0.0",
+    "port": 3000
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "cinemai"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "s3": {
+    "region": "us-east-1",
+    "bucket": "cinemai-assets"
+  },
+  "ai": {
+    "provider": "openai",
+    "model": "gpt-4"
+  }
+}

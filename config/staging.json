@@ -1,0 +1,12 @@
+{
+  "app": {
+    "port": 3002
+  },
+  "database": {
+    "host": "staging-db.cinemai.io",
+    "name": "cinemai_staging"
+  },
+  "logging": {
+    "level": "info"
+  }
+}
