@@ -1,0 +1,12 @@
+{
+  "app": {
+    "port": 3000
+  },
+  "database": {
+    "host": "prod-db.cinemai.io",
+    "name": "cinemai_prod"
+  },
+  "logging": {
+    "level": "error"
+  }
+}
