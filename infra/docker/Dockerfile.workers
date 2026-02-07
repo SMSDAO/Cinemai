@@ -1,0 +1,60 @@
+# CinemAi Neo - Workers Dockerfile
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Install system dependencies for video processing
+RUN apk add --no-cache \
+    ffmpeg \
+    python3 \
+    make \
+    g++
+
+# Copy package files
+COPY backend/package*.json ./backend/
+COPY backend/tsconfig.json ./backend/
+COPY backend/prisma ./backend/prisma/
+
+# Copy worker files
+COPY workers/*.ts ./workers/
+
+# Install dependencies
+WORKDIR /app/backend
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy backend source for shared code
+COPY backend/src ./src
+
+# Build
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    ffmpeg \
+    dumb-init
+
+# Create app user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy artifacts
+COPY --from=builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/backend/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/workers ./workers
+COPY --from=builder --chown=nodejs:nodejs /app/backend/package*.json ./
+
+USER nodejs
+
+# Health check - checks if worker process is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD pgrep -f "node.*worker" || exit 1
+
+# Workers will be started via command override in docker-compose
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "workers/cinema-ingest.worker.js"]

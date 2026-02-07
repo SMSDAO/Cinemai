@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: cinemai-neo
+  labels:
+    app: cinemai-neo
+data:
+  # Database
+  postgres-db: "cinemai"
+  
+  # AWS/S3
+  aws-region: "us-east-1"
+  aws-bucket: "cinemai-production-assets"
+  
+  # Application
+  app-name: "CinemAi Neo"
+  app-version: "1.0.0"
+  log-level: "info"
+  
+  # Features
+  enable-cinema: "true"
+  enable-shorts: "true"
+  enable-growth: "true"
+  
+  # Limits
+  max-video-length: "300"
+  max-file-size: "104857600"
+  max-scenes-per-production: "10"

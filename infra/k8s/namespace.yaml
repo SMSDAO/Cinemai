@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cinemai-neo
+  labels:
+    app.kubernetes.io/name: cinemai-neo
+    app.kubernetes.io/part-of: cinemai-platform
+    environment: production

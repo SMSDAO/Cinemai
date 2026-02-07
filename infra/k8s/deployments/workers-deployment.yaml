@@ -1,0 +1,271 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workers
+  namespace: cinemai-neo
+  labels:
+    app: workers
+    component: background-processing
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: workers
+  template:
+    metadata:
+      labels:
+        app: workers
+        component: background-processing
+    spec:
+      containers:
+      # Cinema Workers
+      - name: cinema-ingest
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/cinema-ingest.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "cinema-ingest"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-secret-access-key
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+      
+      - name: cinema-plan
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/cinema-plan.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "cinema-plan"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+
+      - name: cinema-generate
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/cinema-generate.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "cinema-generate"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: openai-api-key
+        - name: RUNWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: runway-api-key
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 4Gi
+
+      - name: cinema-render
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/cinema-render.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "cinema-render"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-secret-access-key
+        resources:
+          requests:
+            cpu: 2000m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 4Gi
+
+      # Shorts Workers
+      - name: shorts-render
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/shorts-render.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "shorts-render"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: aws-secret-access-key
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+
+      # Social Workers
+      - name: social-publish
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/social-publish.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "social-publish"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: TIKTOK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: tiktok-api-key
+        - name: INSTAGRAM_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: instagram-api-key
+        - name: YOUTUBE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: youtube-api-key
+        - name: TWITTER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: twitter-api-key
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+      - name: social-metrics
+        image: ${DOCKER_REGISTRY}/cinemai-workers:${VERSION}
+        imagePullPolicy: Always
+        command: ["node", "workers/social-metrics.worker.js"]
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: WORKER_TYPE
+          value: "social-metrics"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi

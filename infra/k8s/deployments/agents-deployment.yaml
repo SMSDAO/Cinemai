@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agents
+  namespace: cinemai-neo
+  labels:
+    app: agents
+    component: ai-processing
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: agents
+  template:
+    metadata:
+      labels:
+        app: agents
+        component: ai-processing
+    spec:
+      containers:
+      - name: cinema-agent
+        image: ${DOCKER_REGISTRY}/cinemai-agents:${VERSION}
+        imagePullPolicy: Always
+        command: ["python", "-m", "cinema.main"]
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: AGENT_TYPE
+          value: "cinema"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: openai-api-key
+        - name: RUNWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: runway-api-key
+        - name: ELEVENLABS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: elevenlabs-api-key
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+
+      - name: shorts-agent
+        image: ${DOCKER_REGISTRY}/cinemai-agents:${VERSION}
+        imagePullPolicy: Always
+        command: ["python", "-m", "shorts.main"]
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: AGENT_TYPE
+          value: "shorts"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: openai-api-key
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+
+      - name: growth-agent
+        image: ${DOCKER_REGISTRY}/cinemai-agents:${VERSION}
+        imagePullPolicy: Always
+        command: ["python", "-m", "growth.main"]
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: AGENT_TYPE
+          value: "growth"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: redis-url
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: openai-api-key
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
