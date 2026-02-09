@@ -1,4 +1,4 @@
-import { UserService } from '../user.service';
+import { UserService } from './user.service';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -25,9 +25,9 @@ describe('UserService', () => {
     });
   });
 
-  describe('deleteUser', () => {
-    it('should delete user', async () => {
-      await expect(userService.deleteUser('user_id')).resolves.not.toThrow();
+  describe('deleteAccount', () => {
+    it('should delete user account', async () => {
+      await expect(userService.deleteAccount('user_id')).resolves.not.toThrow();
     });
   });
 });
