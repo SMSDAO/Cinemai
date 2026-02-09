@@ -7,10 +7,15 @@ export interface User {
   email: string;
   name?: string;
   avatarUrl?: string;
+  role: 'user' | 'admin';
   subscriptionType: 'free' | 'pro';
   tripsRemaining: number;
+  passwordHash: string;
+  isFirstLogin: boolean;
+  mustChangePassword: boolean;
   createdAt: Date;
   updatedAt: Date;
+  lastLoginAt?: Date;
 }
 
 /**
@@ -29,3 +34,21 @@ export interface UpdateUserInput {
   name?: string;
   avatarUrl?: string;
 }
+
+/**
+ * Password change input
+ */
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
+/**
+ * Admin user for seeding
+ */
+export const ADMIN_USER = {
+  email: 'admin@admin.com',
+  password: 'admin123',
+  name: 'System Administrator',
+  role: 'admin' as const,
+};

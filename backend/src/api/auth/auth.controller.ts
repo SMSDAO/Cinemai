@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth/auth.service';
  * - POST /auth/login
  * - POST /auth/refresh
  * - POST /auth/logout
+ * - POST /auth/change-password
  */
 @Controller('auth')
 export class AuthController {
@@ -31,6 +32,15 @@ export class AuthController {
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
     return this.authService.login(body.email, body.password);
+  }
+
+  /**
+   * Change password
+   * POST /auth/change-password
+   */
+  @Post('change-password')
+  async changePassword(@Body() body: { userId: string; currentPassword: string; newPassword: string }) {
+    return this.authService.changePassword(body.userId, body.currentPassword, body.newPassword);
   }
 
   /**

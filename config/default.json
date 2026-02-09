@@ -2,7 +2,14 @@
   "app": {
     "name": "CinemAi Neo",
     "version": "1.0.0",
-    "port": 3000
+    "port": 3000,
+    "host": "localhost",
+    "baseUrl": "http://localhost:3000"
+  },
+  "admin": {
+    "email": "admin@admin.com",
+    "defaultPassword": "admin123",
+    "panelPath": "/admin"
   },
   "database": {
     "host": "localhost",
