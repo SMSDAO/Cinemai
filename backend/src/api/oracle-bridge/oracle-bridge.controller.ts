@@ -4,7 +4,7 @@ import { OracleSyncService } from '../../services/oracle-sync/oracle-sync.servic
 /**
  * Oracle Bridge API Controller
  * REST endpoints for Oracle database synchronization
- * 
+ *
  * Endpoints:
  * - POST /oracle/sync/full
  * - GET /oracle/sync/status

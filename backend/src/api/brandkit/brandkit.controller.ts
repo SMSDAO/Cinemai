@@ -4,7 +4,7 @@ import { BrandkitService } from '../../services/brandkit/brandkit.service';
 /**
  * Brand Kit API Controller
  * REST endpoints for brand asset management
- * 
+ *
  * Endpoints:
  * - POST /brandkit
  * - PUT /brandkit/:id
@@ -23,7 +23,8 @@ export class BrandkitController {
   @Post()
   async createBrandKit(
     @Req() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       name: string;
       logoUrl?: string;
       primaryColor?: string;
@@ -42,7 +43,8 @@ export class BrandkitController {
   @Put(':id')
   async updateBrandKit(
     @Param('id') brandKitId: string,
-    @Body() body: {
+    @Body()
+    body: {
       name?: string;
       logoUrl?: string;
       primaryColor?: string;

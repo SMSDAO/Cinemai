@@ -4,7 +4,7 @@ import { AuthService } from '../../services/auth/auth.service';
 /**
  * Auth API Controller
  * REST endpoints for authentication
- * 
+ *
  * Endpoints:
  * - POST /auth/signup
  * - POST /auth/login
@@ -39,7 +39,9 @@ export class AuthController {
    * POST /auth/change-password
    */
   @Post('change-password')
-  async changePassword(@Body() body: { userId: string; currentPassword: string; newPassword: string }) {
+  async changePassword(
+    @Body() body: { userId: string; currentPassword: string; newPassword: string },
+  ) {
     return this.authService.changePassword(body.userId, body.currentPassword, body.newPassword);
   }
 

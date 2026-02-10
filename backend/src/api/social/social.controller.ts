@@ -4,7 +4,7 @@ import { SocialService } from '../../services/social/social.service';
 /**
  * Social API Controller
  * REST endpoints for social account management
- * 
+ *
  * Endpoints:
  * - POST /social/accounts
  * - GET /social/accounts
@@ -22,7 +22,8 @@ export class SocialController {
   @Post('accounts')
   async connectAccount(
     @Req() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       platform: 'tiktok' | 'instagram' | 'youtube' | 'x';
       accessToken: string;
       refreshToken?: string;
@@ -58,7 +59,10 @@ export class SocialController {
    * GET /social/auth/:platform
    */
   @Get('auth/:platform')
-  async getAuthUrl(@Param('platform') platform: string, @Query('redirect_uri') redirectUri: string) {
+  async getAuthUrl(
+    @Param('platform') platform: string,
+    @Query('redirect_uri') redirectUri: string,
+  ) {
     const authUrl = await this.socialService.getAuthUrl(platform, redirectUri);
     return { authUrl };
   }

@@ -4,7 +4,7 @@ import { BillingService } from '../../services/billing/billing.service';
 /**
  * Billing API Controller
  * REST endpoints for payments and subscriptions
- * 
+ *
  * Endpoints:
  * - POST /billing/trips/purchase
  * - POST /billing/subscriptions/create

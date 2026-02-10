@@ -4,7 +4,7 @@ import { CinemaService } from '../../services/cinema/cinema.service';
 /**
  * Productions API Controller
  * REST endpoints for cinema productions
- * 
+ *
  * Endpoints:
  * - POST /cinema/productions
  * - POST /cinema/productions/:id/run
@@ -23,7 +23,8 @@ export class ProductionsController {
   @Post()
   async createProduction(
     @Req() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       title: string;
       script: string;
       photoUrl: string;

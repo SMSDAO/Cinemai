@@ -4,7 +4,7 @@ import { GrowthService } from '../../services/growth/growth.service';
 /**
  * Growth API Controller
  * REST endpoints for social media automation
- * 
+ *
  * Endpoints:
  * - POST /social/posts
  * - GET /social/posts
@@ -22,7 +22,8 @@ export class GrowthController {
   @Post('social/posts')
   async publishPost(
     @Req() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       contentId: string;
       contentType: 'production' | 'short';
       platforms: string[];
@@ -42,11 +43,7 @@ export class GrowthController {
    * GET /social/posts
    */
   @Get('social/posts')
-  async listPosts(
-    @Req() req: any,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  async listPosts(@Req() req: any, @Query('page') page?: string, @Query('limit') limit?: string) {
     const userId = req.user?.id;
     return this.growthService.listPosts(
       userId,

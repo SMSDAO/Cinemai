@@ -4,7 +4,7 @@ import { CinemaService } from '../../services/cinema/cinema.service';
 /**
  * Assets API Controller
  * REST endpoints for production assets
- * 
+ *
  * Endpoints:
  * - GET /assets/productions/:id
  */

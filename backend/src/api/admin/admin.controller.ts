@@ -7,7 +7,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nes
  * - User management
  * - System configuration
  * - Analytics and reporting
- * 
+ *
  * Access: /admin/*
  * Auth required: Admin role
  */

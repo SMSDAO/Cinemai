@@ -4,7 +4,7 @@ import { ShortsService } from '../../services/shorts/shorts.service';
 /**
  * Shorts API Controller
  * REST endpoints for short-form videos
- * 
+ *
  * Endpoints:
  * - POST /shorts
  * - POST /shorts/:id/hooks
@@ -24,7 +24,8 @@ export class ShortsController {
   @Post()
   async createShort(
     @Req() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       title: string;
       idea: string;
       format?: string;
@@ -66,11 +67,7 @@ export class ShortsController {
    * GET /shorts
    */
   @Get()
-  async listShorts(
-    @Req() req: any,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  async listShorts(@Req() req: any, @Query('page') page?: string, @Query('limit') limit?: string) {
     const userId = req.user?.id;
     return this.shortsService.listShorts(
       userId,

@@ -4,7 +4,7 @@ import { UserService } from '../../services/user/user.service';
 /**
  * Users API Controller
  * REST endpoints for user management
- * 
+ *
  * Endpoints:
  * - GET /users/me
  * - PUT /users/me
