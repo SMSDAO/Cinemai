@@ -45,8 +45,8 @@ jobs:
       
       - name: Install dependencies
         working-directory: mobile
-        run: npm ci
-      
+        run: npm ci --legacy-peer-deps
+
       - name: Run ESLint
         working-directory: mobile
         run: npm run lint
@@ -74,5 +74,5 @@ jobs:
       - name: Type check mobile
         working-directory: mobile
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run type-check
