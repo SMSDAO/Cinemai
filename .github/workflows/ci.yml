@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run linting
+        working-directory: backend
+        run: npm run lint
+
+      - name: Check formatting
+        working-directory: backend
+        run: npm run format:check
+
+      - name: Type check
+        working-directory: backend
+        run: npm run type-check
+
+      - name: Run tests
+        working-directory: backend
+        run: npm run test:cov
+
+      - name: Build
+        working-directory: backend
+        run: npm run build
+
+  mobile:
+    name: Mobile CI
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+
+      - name: Run linting
+        working-directory: mobile
+        run: npm run lint
+
+      - name: Check formatting
+        working-directory: mobile
+        run: npm run format:check
+
+      - name: Type check
+        working-directory: mobile
+        run: npm run type-check
+
+      - name: Run tests
+        working-directory: mobile
+        run: npm run test

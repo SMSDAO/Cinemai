@@ -4,24 +4,18 @@
  */
 
 import React from 'react';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { AppProvider } from './context/AppContext';
-import { AppNavigator } from './navigation/AppNavigator';
-import { colors } from './theme/tokens';
+import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
 function App(): JSX.Element {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg.primary} />
-      <ThemeProvider>
-        <AppProvider>
-          <AuthProvider>
-            <AppNavigator />
-          </AuthProvider>
-        </AppProvider>
-      </ThemeProvider>
+      <StatusBar barStyle="dark-content" />
+      <NavigationContainer>
+        <View style={styles.placeholder}>
+          <Text>CinemAi Neo Mobile App</Text>
+        </View>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
@@ -30,6 +24,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg.primary,
+  },
+  placeholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
