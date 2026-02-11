@@ -82,7 +82,7 @@ export const BillingScreen = () => {
         <Text style={styles.sectionTitle}>Purchase Trips</Text>
         <Text style={styles.sectionHint}>Pay as you go - $1 per production</Text>
         <View style={styles.packagesGrid}>
-          {TRIP_PACKAGES.map((pkg) => (
+          {TRIP_PACKAGES.map(pkg => (
             <TouchableOpacity
               key={pkg.id}
               style={[styles.packageCard, selectedPackage === pkg.id && styles.packageCardSelected]}

@@ -8,7 +8,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { NeoGlowCard } from '../../components/NeoGlowCard/NeoGlowCard';
 import { NeoGlowButton } from '../../components/NeoGlowButton/NeoGlowButton';
 import { AnalyticsCharts } from '../../components/AnalyticsCharts/AnalyticsCharts';
-import { useAnalytics } from '../../hooks/useAnalytics';
+// import { useAnalytics } from '../../hooks/useAnalytics';
 import { colors, spacing, typography, radii } from '../../theme/tokens';
 
 const PLATFORMS = [
@@ -24,8 +24,8 @@ export const GrowthScreen = () => {
   // const { shortsAnalytics, productionsAnalytics, loading } = useAnalytics();
 
   const togglePlatform = (platformId: string) => {
-    setSelectedPlatforms((prev) =>
-      prev.includes(platformId) ? prev.filter((id) => id !== platformId) : [...prev, platformId],
+    setSelectedPlatforms(prev =>
+      prev.includes(platformId) ? prev.filter(id => id !== platformId) : [...prev, platformId],
     );
   };
 
@@ -45,7 +45,7 @@ export const GrowthScreen = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Connected Platforms</Text>
         <View style={styles.platformsGrid}>
-          {PLATFORMS.map((platform) => (
+          {PLATFORMS.map(platform => (
             <TouchableOpacity
               key={platform.id}
               style={[

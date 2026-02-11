@@ -26,7 +26,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
 }) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={localStyles.container}>
-      {availableStyles.map((style) => (
+      {availableStyles.map(style => (
         <TouchableOpacity
           key={style.id}
           style={[localStyles.chip, selectedStyle === style.id && localStyles.chipSelected]}

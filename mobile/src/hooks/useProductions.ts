@@ -29,7 +29,7 @@ export const useProductions = () => {
       setLoading(true);
       setError(null);
       const production = await cinemaService.createProduction(data);
-      setProductions((prev) => [production, ...prev]);
+      setProductions(prev => [production, ...prev]);
       return production;
     } catch (err) {
       setError(err as Error);
@@ -44,7 +44,7 @@ export const useProductions = () => {
       setLoading(true);
       setError(null);
       const production = await cinemaService.runProduction(productionId);
-      setProductions((prev) => prev.map((p) => (p.id === productionId ? production : p)));
+      setProductions(prev => prev.map(p => (p.id === productionId ? production : p)));
       return production;
     } catch (err) {
       setError(err as Error);
@@ -59,7 +59,7 @@ export const useProductions = () => {
       setLoading(true);
       setError(null);
       await cinemaService.deleteProduction(productionId);
-      setProductions((prev) => prev.filter((p) => p.id !== productionId));
+      setProductions(prev => prev.filter(p => p.id !== productionId));
     } catch (err) {
       setError(err as Error);
       throw err;

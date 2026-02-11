@@ -37,11 +37,11 @@ export async function seedAdminUser() {
 // Run if executed directly
 if (require.main === module) {
   seedAdminUser()
-    .then((result) => {
+    .then(result => {
       console.log('Seed completed:', result);
       process.exit(0);
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Seed failed:', error);
       process.exit(1);
     });

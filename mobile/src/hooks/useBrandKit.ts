@@ -29,7 +29,7 @@ export const useBrandKit = () => {
       setLoading(true);
       setError(null);
       const brandKit = await brandKitService.createBrandKit(data);
-      setBrandKits((prev) => [brandKit, ...prev]);
+      setBrandKits(prev => [brandKit, ...prev]);
       return brandKit;
     } catch (err) {
       setError(err as Error);
@@ -44,7 +44,7 @@ export const useBrandKit = () => {
       setLoading(true);
       setError(null);
       const brandKit = await brandKitService.updateBrandKit(id, data);
-      setBrandKits((prev) => prev.map((bk) => (bk.id === id ? brandKit : bk)));
+      setBrandKits(prev => prev.map(bk => (bk.id === id ? brandKit : bk)));
       return brandKit;
     } catch (err) {
       setError(err as Error);
@@ -59,7 +59,7 @@ export const useBrandKit = () => {
       setLoading(true);
       setError(null);
       await brandKitService.deleteBrandKit(id);
-      setBrandKits((prev) => prev.filter((bk) => bk.id !== id));
+      setBrandKits(prev => prev.filter(bk => bk.id !== id));
     } catch (err) {
       setError(err as Error);
       throw err;

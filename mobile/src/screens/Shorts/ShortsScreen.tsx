@@ -89,7 +89,7 @@ export const ShortsScreen = () => {
       <NeoGlowCard style={styles.card}>
         <Text style={styles.label}>Format</Text>
         <View style={styles.formatRow}>
-          {FORMATS.map((fmt) => (
+          {FORMATS.map(fmt => (
             <TouchableOpacity
               key={fmt.id}
               style={[styles.formatChip, format === fmt.id && styles.formatChipSelected]}

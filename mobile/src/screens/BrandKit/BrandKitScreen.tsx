@@ -105,7 +105,7 @@ export const BrandKitScreen = () => {
       <NeoGlowCard style={styles.card}>
         <Text style={styles.label}>Primary Color</Text>
         <View style={styles.colorRow}>
-          {PRESET_COLORS.slice(0, 4).map((color) => (
+          {PRESET_COLORS.slice(0, 4).map(color => (
             <TouchableOpacity
               key={color}
               style={[
@@ -125,7 +125,7 @@ export const BrandKitScreen = () => {
       <NeoGlowCard style={styles.card}>
         <Text style={styles.label}>Secondary Color</Text>
         <View style={styles.colorRow}>
-          {PRESET_COLORS.slice(4, 8).map((color) => (
+          {PRESET_COLORS.slice(4, 8).map(color => (
             <TouchableOpacity
               key={color}
               style={[
@@ -145,7 +145,7 @@ export const BrandKitScreen = () => {
       <NeoGlowCard style={styles.card}>
         <Text style={styles.label}>Font Family</Text>
         <View style={styles.fontList}>
-          {FONT_FAMILIES.map((font) => (
+          {FONT_FAMILIES.map(font => (
             <TouchableOpacity
               key={font}
               style={[styles.fontOption, fontFamily === font && styles.fontOptionSelected]}
@@ -167,7 +167,7 @@ export const BrandKitScreen = () => {
       {brandKits.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Your Brand Kits</Text>
-          {brandKits.map((kit) => (
+          {brandKits.map(kit => (
             <NeoGlowCard key={kit.id} style={styles.kitCard}>
               <Text style={styles.kitName}>{kit.name}</Text>
               <View style={styles.kitColors}>

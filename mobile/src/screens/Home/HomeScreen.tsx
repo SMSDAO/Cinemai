@@ -71,7 +71,7 @@ export const HomeScreen = () => {
         ) : productions.length === 0 ? (
           <Text style={styles.emptyText}>No productions yet</Text>
         ) : (
-          productions.slice(0, 3).map((prod) => (
+          productions.slice(0, 3).map(prod => (
             <NeoGlowCard key={prod.id} style={styles.itemCard}>
               <Text style={styles.itemTitle}>{prod.title}</Text>
               <Text style={styles.itemStatus}>{prod.status}</Text>

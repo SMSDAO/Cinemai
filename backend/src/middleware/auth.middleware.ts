@@ -17,7 +17,8 @@ export class AuthMiddleware implements NestMiddleware {
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
+      // Extract token for future JWT verification
+      // const token = authHeader.substring(7);
 
       // TODO: Verify token and decode user
       // For now, attach a mock user

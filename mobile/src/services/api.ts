@@ -26,18 +26,18 @@ class ApiClient {
   private setupInterceptors() {
     // Request interceptor - add auth token
     this.client.interceptors.request.use(
-      (config) => {
+      config => {
         if (this.accessToken) {
           config.headers.Authorization = `Bearer ${this.accessToken}`;
         }
         return config;
       },
-      (error) => Promise.reject(error),
+      error => Promise.reject(error),
     );
 
     // Response interceptor - handle errors
     this.client.interceptors.response.use(
-      (response) => response,
+      response => response,
       (error: AxiosError) => {
         if (error.response?.status === 401) {
           // Token expired - trigger logout

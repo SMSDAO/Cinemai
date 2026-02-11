@@ -29,7 +29,7 @@ export const useShorts = () => {
       setLoading(true);
       setError(null);
       const short = await shortsService.createShort(data);
-      setShorts((prev) => [short, ...prev]);
+      setShorts(prev => [short, ...prev]);
       return short;
     } catch (err) {
       setError(err as Error);
@@ -72,7 +72,7 @@ export const useShorts = () => {
       setLoading(true);
       setError(null);
       await shortsService.deleteShort(shortId);
-      setShorts((prev) => prev.filter((s) => s.id !== shortId));
+      setShorts(prev => prev.filter(s => s.id !== shortId));
     } catch (err) {
       setError(err as Error);
       throw err;
