@@ -35,9 +35,9 @@ If deploying the backend API, set the following environment variables in Vercel:
 ## Current Configuration
 
 The `vercel.json` file is configured to:
-- Serve static files from the `public/` directory
-- Set security headers
-- Handle 404 errors gracefully
+- Build and serve static files from the `public/` directory using `@vercel/static`
+- Rewrite all requests to `/public/index.html` (SPA behavior)
+- Set security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
 
 ## Backend API Deployment
 
