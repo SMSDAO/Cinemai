@@ -23,7 +23,6 @@
     "node_modules",
     "android",
     "ios",
-    "__tests__",
     "*.config.js"
   ],
   "rules": {

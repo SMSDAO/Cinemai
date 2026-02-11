@@ -10,7 +10,6 @@ module.exports = {
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/**/*.interface.ts',
-    '!src/**/*.module.ts',
     '!src/main.ts',
   ],
   coverageDirectory: 'coverage',
