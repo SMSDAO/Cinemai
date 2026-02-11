@@ -1,6 +1,12 @@
+/**
+ * App Root Component
+ * Main entry point with context providers and navigation
+ */
+
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { colors } from './theme/tokens';
 
 function App(): JSX.Element {
   return (
@@ -18,6 +24,7 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.bg.primary,
   },
   placeholder: {
     flex: 1,

@@ -1,0 +1,161 @@
+version: '3.9'
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: cinemai_dev
+      POSTGRES_USER: cinemai_dev
+      POSTGRES_PASSWORD: dev_password_123
+
+  redis:
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: devuser
+      MINIO_ROOT_PASSWORD: devpassword123
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.backend
+      target: builder
+    volumes:
+      - ../../backend/src:/app/src
+      - ../../backend/prisma:/app/prisma
+      - backend_node_modules:/app/node_modules
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3000:3000"
+      - "9229:9229" # Debug port
+
+  # Development workers with hot reload
+  worker-cinema-ingest:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-cinema-plan:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-cinema-generate:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-cinema-render:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-shorts-render:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-social-publish:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  worker-social-metrics:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.workers
+    volumes:
+      - ../../workers:/app/workers
+      - ../../backend/src:/app/src
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+
+  # Development agents with hot reload
+  agent-cinema:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.agents
+    volumes:
+      - ../../agents:/app
+    environment:
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: DEBUG
+    command: ["python", "-m", "cinema.main", "--reload"]
+
+  agent-shorts:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.agents
+    volumes:
+      - ../../agents:/app
+    environment:
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: DEBUG
+    command: ["python", "-m", "shorts.main", "--reload"]
+
+  agent-growth:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.agents
+    volumes:
+      - ../../agents:/app
+    environment:
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: DEBUG
+    command: ["python", "-m", "growth.main", "--reload"]
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  backend_node_modules:
