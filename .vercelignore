@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist
+build
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+config/secrets.json
+
+# Testing
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+
+# Mobile specific
+mobile/ios/Pods
+mobile/ios/build
+mobile/android/app/build
+mobile/android/.gradle
+*.apk
+*.ipa
+
+# Development files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Documentation (not needed for deployment)
+docs
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github

@@ -1,7 +1,7 @@
 /**
  * Neo Glow Design Tokens
  * Official design system for CinemAi Neo
- * 
+ *
  * @see .github/ui-design-tokens.md for full documentation
  */
 
