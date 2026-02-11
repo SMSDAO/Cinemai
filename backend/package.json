@@ -8,13 +8,17 @@
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "start": "node dist/main.js",
     "test": "jest",
+    "test:unit": "jest",
+    "test:integration": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
