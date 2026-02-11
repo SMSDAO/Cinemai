@@ -90,9 +90,9 @@ model User {
   name              String?
   passwordHash      String
   role              UserRole         @default(USER)
-  avatar_url        String?
-  subscription_type SubscriptionType @default(FREE)
-  trips_remaining   Int              @default(0)
+  avatarUrl         String?
+  subscriptionType  SubscriptionType @default(FREE)
+  tripsRemaining    Int              @default(0)
   isFirstLogin      Boolean          @default(true)
   mustChangePassword Boolean         @default(false)
   createdAt         DateTime         @default(now())
