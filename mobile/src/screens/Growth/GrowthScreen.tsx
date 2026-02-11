@@ -25,9 +25,7 @@ export const GrowthScreen = () => {
 
   const togglePlatform = (platformId: string) => {
     setSelectedPlatforms((prev) =>
-      prev.includes(platformId)
-        ? prev.filter((id) => id !== platformId)
-        : [...prev, platformId]
+      prev.includes(platformId) ? prev.filter((id) => id !== platformId) : [...prev, platformId],
     );
   };
 

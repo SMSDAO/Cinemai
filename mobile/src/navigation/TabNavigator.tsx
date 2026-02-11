@@ -41,16 +41,16 @@ export const TabNavigator: React.FC = () => {
         },
       }}
     >
-      <Tab.Screen 
-        name="Home" 
+      <Tab.Screen
+        name="Home"
         component={HomeScreen}
         options={{
           tabBarIcon: () => null,
           tabBarLabel: 'Home',
         }}
       />
-      <Tab.Screen 
-        name="Cinema" 
+      <Tab.Screen
+        name="Cinema"
         component={CinemaNavigator}
         options={{
           headerShown: false,
@@ -58,24 +58,24 @@ export const TabNavigator: React.FC = () => {
           tabBarLabel: 'Cinema',
         }}
       />
-      <Tab.Screen 
-        name="Shorts" 
+      <Tab.Screen
+        name="Shorts"
         component={ShortsScreen}
         options={{
           tabBarIcon: () => null,
           tabBarLabel: 'Shorts',
         }}
       />
-      <Tab.Screen 
-        name="Growth" 
+      <Tab.Screen
+        name="Growth"
         component={GrowthScreen}
         options={{
           tabBarIcon: () => null,
           tabBarLabel: 'Growth',
         }}
       />
-      <Tab.Screen 
-        name="Account" 
+      <Tab.Screen
+        name="Account"
         component={AccountScreen}
         options={{
           tabBarIcon: () => null,

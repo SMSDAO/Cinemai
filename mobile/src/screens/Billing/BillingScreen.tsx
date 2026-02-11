@@ -31,14 +31,10 @@ export const BillingScreen = () => {
   };
 
   const handleSubscribeToPro = async () => {
-    Alert.alert(
-      'Subscribe to Pro',
-      'Subscribe for $49/month and get unlimited access?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Subscribe', onPress: () => Alert.alert('Success', 'Subscribed to Pro!') },
-      ]
-    );
+    Alert.alert('Subscribe to Pro', 'Subscribe for $49/month and get unlimited access?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Subscribe', onPress: () => Alert.alert('Success', 'Subscribed to Pro!') },
+    ]);
   };
 
   return (
@@ -77,10 +73,7 @@ export const BillingScreen = () => {
             <Text style={styles.feature}>✓ Advanced Analytics</Text>
             <Text style={styles.feature}>✓ No Watermarks</Text>
           </View>
-          <NeoGlowButton
-            title="Subscribe to Pro"
-            onPress={handleSubscribeToPro}
-          />
+          <NeoGlowButton title="Subscribe to Pro" onPress={handleSubscribeToPro} />
         </NeoGlowCard>
       )}
 
@@ -92,10 +85,7 @@ export const BillingScreen = () => {
           {TRIP_PACKAGES.map((pkg) => (
             <TouchableOpacity
               key={pkg.id}
-              style={[
-                styles.packageCard,
-                selectedPackage === pkg.id && styles.packageCardSelected,
-              ]}
+              style={[styles.packageCard, selectedPackage === pkg.id && styles.packageCardSelected]}
               onPress={() => setSelectedPackage(pkg.id)}
             >
               {pkg.discount && (

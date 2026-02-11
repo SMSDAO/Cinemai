@@ -4,7 +4,15 @@
  */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { NeoGlowButton } from '../../components/NeoGlowButton/NeoGlowButton';
 import { NeoGlowCard } from '../../components/NeoGlowCard/NeoGlowCard';
 import { UploadBox } from '../../components/UploadBox/UploadBox';
@@ -12,13 +20,24 @@ import { useBrandKit } from '../../hooks/useBrandKit';
 import { colors, spacing, typography, radii } from '../../theme/tokens';
 
 const PRESET_COLORS = [
-  '#FF0000', '#FF7F00', '#FFFF00', '#00FF00',
-  '#0000FF', '#4B0082', '#9400D3', '#FF1493',
+  '#FF0000',
+  '#FF7F00',
+  '#FFFF00',
+  '#00FF00',
+  '#0000FF',
+  '#4B0082',
+  '#9400D3',
+  '#FF1493',
 ];
 
 const FONT_FAMILIES = [
-  'Inter', 'Roboto', 'Montserrat', 'Poppins',
-  'Playfair Display', 'Space Grotesk', 'Open Sans',
+  'Inter',
+  'Roboto',
+  'Montserrat',
+  'Poppins',
+  'Playfair Display',
+  'Space Grotesk',
+  'Open Sans',
 ];
 
 export const BrandKitScreen = () => {
@@ -129,10 +148,7 @@ export const BrandKitScreen = () => {
           {FONT_FAMILIES.map((font) => (
             <TouchableOpacity
               key={font}
-              style={[
-                styles.fontOption,
-                fontFamily === font && styles.fontOptionSelected,
-              ]}
+              style={[styles.fontOption, fontFamily === font && styles.fontOptionSelected]}
               onPress={() => setFontFamily(font)}
             >
               <Text style={styles.fontText}>{font}</Text>

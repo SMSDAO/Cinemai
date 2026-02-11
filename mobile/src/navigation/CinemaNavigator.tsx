@@ -27,13 +27,13 @@ export const CinemaNavigator: React.FC = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="CinemaSimple" 
+      <Stack.Screen
+        name="CinemaSimple"
         component={CinemaSimpleScreen}
         options={{ title: 'Quick Cinema' }}
       />
-      <Stack.Screen 
-        name="CinemaPro" 
+      <Stack.Screen
+        name="CinemaPro"
         component={CinemaProScreen}
         options={{ title: 'Pro Cinema' }}
       />

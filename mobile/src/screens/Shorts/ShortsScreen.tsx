@@ -4,7 +4,15 @@
  */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { NeoGlowButton } from '../../components/NeoGlowButton/NeoGlowButton';
 import { NeoGlowCard } from '../../components/NeoGlowCard/NeoGlowCard';
 import { CaptionPreview } from '../../components/CaptionPreview/CaptionPreview';
@@ -84,10 +92,7 @@ export const ShortsScreen = () => {
           {FORMATS.map((fmt) => (
             <TouchableOpacity
               key={fmt.id}
-              style={[
-                styles.formatChip,
-                format === fmt.id && styles.formatChipSelected,
-              ]}
+              style={[styles.formatChip, format === fmt.id && styles.formatChipSelected]}
               onPress={() => setFormat(fmt.id as any)}
             >
               <Text style={styles.formatIcon}>{fmt.icon}</Text>
@@ -123,10 +128,7 @@ export const ShortsScreen = () => {
           {hooks.map((hook, index) => (
             <TouchableOpacity
               key={index}
-              style={[
-                styles.hookItem,
-                selectedHook === index && styles.hookItemSelected,
-              ]}
+              style={[styles.hookItem, selectedHook === index && styles.hookItemSelected]}
               onPress={() => setSelectedHook(index)}
             >
               <Text style={styles.hookText}>{hook}</Text>
@@ -137,10 +139,7 @@ export const ShortsScreen = () => {
 
       {selectedHook !== null && (
         <>
-          <CaptionPreview
-            text={hooks[selectedHook]}
-            style={'default' as any}
-          />
+          <CaptionPreview text={hooks[selectedHook]} style={'default' as any} />
           <NeoGlowButton
             title="🎞 Create Variants"
             onPress={handleCreateVariants}

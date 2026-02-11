@@ -14,7 +14,10 @@ interface ChangePasswordScreenProps {
   route: any;
 }
 
-export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navigation, route }) => {
+export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,7 +49,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
     try {
       // TODO: Call API to change password
       // const response = await authService.changePassword(userId, currentPassword, newPassword);
-      
+
       Alert.alert('Success', 'Password changed successfully', [
         {
           text: 'OK',

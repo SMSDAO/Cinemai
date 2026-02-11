@@ -29,10 +29,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
       {availableStyles.map((style) => (
         <TouchableOpacity
           key={style.id}
-          style={[
-            localStyles.chip,
-            selectedStyle === style.id && localStyles.chipSelected,
-          ]}
+          style={[localStyles.chip, selectedStyle === style.id && localStyles.chipSelected]}
           onPress={() => onSelectStyle(style.id)}
           activeOpacity={0.7}
         >

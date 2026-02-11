@@ -31,7 +31,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ navigation }) => {
     try {
       // TODO: Call admin API
       // const response = await api.get('/admin');
-      
+
       // Mock data for now
       setDashboardData({
         totalUsers: 0,
@@ -70,7 +70,11 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ navigation }) => {
       style={styles.container}
       contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.glow.primary} />
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+          tintColor={colors.glow.primary}
+        />
       }
     >
       <View style={styles.header}>

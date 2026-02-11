@@ -44,9 +44,7 @@ export const useProductions = () => {
       setLoading(true);
       setError(null);
       const production = await cinemaService.runProduction(productionId);
-      setProductions((prev) =>
-        prev.map((p) => (p.id === productionId ? production : p))
-      );
+      setProductions((prev) => prev.map((p) => (p.id === productionId ? production : p)));
       return production;
     } catch (err) {
       setError(err as Error);

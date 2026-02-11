@@ -35,15 +35,8 @@ export const Timeline: React.FC<TimelineProps> = ({ steps }) => {
       {steps.map((step, index) => (
         <View key={index} style={styles.stepContainer}>
           <View style={styles.stepIndicatorContainer}>
-            <View
-              style={[
-                styles.stepIndicator,
-                { backgroundColor: getStepColor(step.status) },
-              ]}
-            />
-            {index < steps.length - 1 && (
-              <View style={styles.connector} />
-            )}
+            <View style={[styles.stepIndicator, { backgroundColor: getStepColor(step.status) }]} />
+            {index < steps.length - 1 && <View style={styles.connector} />}
           </View>
           <View style={styles.stepContent}>
             <Text style={[styles.stepLabel, { color: getStepColor(step.status) }]}>
