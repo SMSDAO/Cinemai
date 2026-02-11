@@ -2,26 +2,37 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["backend/**"]
-      }
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "backend/src/main.ts"
+      "src": "/(.*)",
+      "dest": "/public/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/",
       "dest": "/public/index.html"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "installCommand": "cd backend && npm install",
-  "buildCommand": "cd backend && npm run build"
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
 }
