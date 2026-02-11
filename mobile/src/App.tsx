@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 function App(): JSX.Element {
@@ -7,7 +7,9 @@ function App(): JSX.Element {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <NavigationContainer>
-        {/* TODO: Add navigation stack */}
+        <View style={styles.placeholder}>
+          <Text>CinemAi Neo Mobile App</Text>
+        </View>
       </NavigationContainer>
     </SafeAreaView>
   );
@@ -16,6 +18,11 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  placeholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
