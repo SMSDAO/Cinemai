@@ -17,7 +17,8 @@ const FORMATS = [
   { id: '16:9', name: 'Landscape (16:9)', icon: '🖥' },
 ];
 
-const CAPTION_STYLES = ['default', 'bold', 'neon', 'minimal'];
+// Caption styles available for shorts (not yet implemented in UI)
+// const CAPTION_STYLES = ['default', 'bold', 'neon', 'minimal'];
 
 export const ShortsScreen = () => {
   const [title, setTitle] = useState('');
@@ -25,8 +26,11 @@ export const ShortsScreen = () => {
   const [format, setFormat] = useState<'9:16' | '1:1' | '16:9'>('9:16');
   const [hooks, setHooks] = useState<string[]>([]);
   const [selectedHook, setSelectedHook] = useState<number | null>(null);
-  const [captionStyle, setCaptionStyle] = useState('default');
-  const { createShort, generateHooks, generateVariants, loading } = useShorts();
+  // Caption style management (placeholder for future implementation)
+  // const [captionStyle, setCaptionStyle] = useState('default');
+  const { createShort, generateHooks, loading } = useShorts();
+  // generateVariants will be used when implementing variant generation
+  // const { generateVariants } = useShorts();
 
   const handleGenerateHooks = async () => {
     if (!idea) {
@@ -135,7 +139,7 @@ export const ShortsScreen = () => {
         <>
           <CaptionPreview
             text={hooks[selectedHook]}
-            style={captionStyle as any}
+            style={'default' as any}
           />
           <NeoGlowButton
             title="🎞 Create Variants"

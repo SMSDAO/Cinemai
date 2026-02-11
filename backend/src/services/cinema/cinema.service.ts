@@ -12,12 +12,15 @@ export class CinemaService {
   /**
    * Create a new cinema production
    */
-  async createProduction(userId: string, data: {
-    title: string;
-    script: string;
-    photoUrl: string;
-    style?: string;
-  }): Promise<any> {
+  async createProduction(
+    userId: string,
+    data: {
+      title: string;
+      script: string;
+      photoUrl: string;
+      style?: string;
+    },
+  ): Promise<any> {
     // TODO: Integrate with Prisma
     // 1. Create production record
     // 2. Queue for processing

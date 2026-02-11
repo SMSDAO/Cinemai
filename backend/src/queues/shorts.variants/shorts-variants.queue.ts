@@ -1,7 +1,7 @@
 /**
  * Shorts Variants Queue Processor
  * Handles variant generation for shorts
- * 
+ *
  * Shorts Pipeline: VARIANT PLANNING → CAPTION ENGINE → RENDERING
  * - Creates multiple variants for A/B testing
  * - Applies different caption styles
@@ -12,11 +12,7 @@ export class ShortsVariantsQueue {
   /**
    * Process shorts variants job
    */
-  async process(job: {
-    shortId: string;
-    selectedHook: string;
-    formats: string[];
-  }): Promise<void> {
+  async process(job: { shortId: string; selectedHook: string; formats: string[] }): Promise<void> {
     // TODO: Implement variants logic
     // 1. Call Variant Planner Agent
     // 2. Generate variant specifications

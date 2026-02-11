@@ -12,13 +12,16 @@ export class GrowthService {
   /**
    * Publish content to social platforms
    */
-  async publishPost(userId: string, data: {
-    contentId: string;
-    contentType: 'production' | 'short';
-    platforms: string[];
-    caption?: string;
-    scheduledAt?: Date;
-  }): Promise<any> {
+  async publishPost(
+    userId: string,
+    data: {
+      contentId: string;
+      contentType: 'production' | 'short';
+      platforms: string[];
+      caption?: string;
+      scheduledAt?: Date;
+    },
+  ): Promise<any> {
     // TODO: Queue social.publish job
     return {
       id: 'social_post_id',

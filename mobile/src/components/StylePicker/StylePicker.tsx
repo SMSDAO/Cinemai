@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { colors, radii, spacing, typography } from '../../theme/tokens';
 
 interface Style {
@@ -14,32 +14,32 @@ interface Style {
 }
 
 interface StylePickerProps {
-  styles: Style[];
+  availableStyles: Style[];
   selectedStyle: string | null;
   onSelectStyle: (styleId: string) => void;
 }
 
 export const StylePicker: React.FC<StylePickerProps> = ({
-  styles,
+  availableStyles,
   selectedStyle,
   onSelectStyle,
 }) => {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container}>
-      {styles.map((style) => (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={localStyles.container}>
+      {availableStyles.map((style) => (
         <TouchableOpacity
           key={style.id}
           style={[
-            styles.chip,
-            selectedStyle === style.id && styles.chipSelected,
+            localStyles.chip,
+            selectedStyle === style.id && localStyles.chipSelected,
           ]}
           onPress={() => onSelectStyle(style.id)}
           activeOpacity={0.7}
         >
           <Text
             style={[
-              styles.chipText,
-              selectedStyle === style.id && styles.chipTextSelected,
+              localStyles.chipText,
+              selectedStyle === style.id && localStyles.chipTextSelected,
             ]}
           >
             {style.name}
@@ -50,7 +50,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
   },

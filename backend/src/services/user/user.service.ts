@@ -27,10 +27,7 @@ export class UserService {
   /**
    * Update user profile
    */
-  async updateProfile(
-    userId: string,
-    data: { name?: string; avatarUrl?: string },
-  ): Promise<any> {
+  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }): Promise<any> {
     // TODO: Integrate with Prisma
     return {
       id: userId,

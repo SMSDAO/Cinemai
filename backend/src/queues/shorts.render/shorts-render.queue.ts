@@ -1,7 +1,7 @@
 /**
  * Shorts Render Queue Processor
  * Handles final rendering of short-form videos
- * 
+ *
  * Shorts Pipeline: RENDERING → DELIVERY
  * - Renders final short video
  * - Applies captions and effects

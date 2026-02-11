@@ -5,7 +5,7 @@
 
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { colors, radii, spacing, shadows } from '../../theme/tokens';
+import { colors, radii, spacing } from '../../theme/tokens';
 
 interface NeoGlowCardProps {
   children: ReactNode;

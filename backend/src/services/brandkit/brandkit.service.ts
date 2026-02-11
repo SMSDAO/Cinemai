@@ -13,13 +13,16 @@ export class BrandkitService {
   /**
    * Create a brand kit
    */
-  async createBrandKit(userId: string, data: {
-    name: string;
-    logoUrl?: string;
-    primaryColor?: string;
-    secondaryColor?: string;
-    fontFamily?: string;
-  }): Promise<any> {
+  async createBrandKit(
+    userId: string,
+    data: {
+      name: string;
+      logoUrl?: string;
+      primaryColor?: string;
+      secondaryColor?: string;
+      fontFamily?: string;
+    },
+  ): Promise<any> {
     // TODO: Integrate with Prisma
     return {
       id: 'brandkit_id',
@@ -36,13 +39,16 @@ export class BrandkitService {
   /**
    * Update brand kit
    */
-  async updateBrandKit(brandKitId: string, data: {
-    name?: string;
-    logoUrl?: string;
-    primaryColor?: string;
-    secondaryColor?: string;
-    fontFamily?: string;
-  }): Promise<any> {
+  async updateBrandKit(
+    brandKitId: string,
+    data: {
+      name?: string;
+      logoUrl?: string;
+      primaryColor?: string;
+      secondaryColor?: string;
+      fontFamily?: string;
+    },
+  ): Promise<any> {
     // TODO: Integrate with Prisma
     return {
       id: brandKitId,

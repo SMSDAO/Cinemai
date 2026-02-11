@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
+import { Text, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
 import { UploadBox } from '../../../components/UploadBox/UploadBox';
 import { NeoGlowButton } from '../../../components/NeoGlowButton/NeoGlowButton';
 import { NeoGlowCard } from '../../../components/NeoGlowCard/NeoGlowCard';

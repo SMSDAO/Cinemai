@@ -1,7 +1,7 @@
 /**
  * Cinema Render Queue Processor
  * Handles final rendering of cinema productions
- * 
+ *
  * Pipeline steps 6-8: ASSEMBLY → RENDERING → DELIVERY
  * - Assembles all video clips
  * - Adds audio (voiceover + music)
@@ -14,10 +14,7 @@ export class CinemaRenderQueue {
   /**
    * Process cinema render job
    */
-  async process(job: {
-    productionId: string;
-    assetIds: string[];
-  }): Promise<void> {
+  async process(job: { productionId: string; assetIds: string[] }): Promise<void> {
     // TODO: Implement render logic
     // 1. Download all assets from S3
     // 2. Call Assembly Agent

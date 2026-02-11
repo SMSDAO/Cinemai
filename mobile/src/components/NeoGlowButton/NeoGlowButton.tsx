@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { colors, radii, spacing, typography, shadows } from '../../theme/tokens';
+import { colors, radii, spacing, typography } from '../../theme/tokens';
 
 interface NeoGlowButtonProps {
   title: string;

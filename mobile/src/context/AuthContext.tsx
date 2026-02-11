@@ -42,31 +42,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await authService.login({ email, password });
-      handleAuthResponse(response);
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.login({ email, password });
+    handleAuthResponse(response);
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    try {
-      const response = await authService.signup({ email, password, name });
-      handleAuthResponse(response);
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.signup({ email, password, name });
+    handleAuthResponse(response);
   };
 
   const logout = async () => {
-    try {
-      await authService.logout();
-      setUser(null);
-      // TODO: Clear stored tokens
-    } catch (error) {
-      throw error;
-    }
+    await authService.logout();
+    setUser(null);
+    // TODO: Clear stored tokens
   };
 
   const refreshUser = () => {

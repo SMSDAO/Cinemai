@@ -1,7 +1,7 @@
 /**
  * Cinema Plan Queue Processor
  * Handles scene planning for cinema productions
- * 
+ *
  * Pipeline steps 2-3: SCRIPT UNDERSTANDING → SCENE PLANNING
  * - Analyzes script with AI
  * - Identifies scenes and characters
@@ -12,10 +12,7 @@ export class CinemaPlanQueue {
   /**
    * Process cinema planning job
    */
-  async process(job: {
-    productionId: string;
-    script: string;
-  }): Promise<void> {
+  async process(job: { productionId: string; script: string }): Promise<void> {
     // TODO: Implement planning logic
     // 1. Call Script Understanding Agent
     // 2. Parse scenes from script

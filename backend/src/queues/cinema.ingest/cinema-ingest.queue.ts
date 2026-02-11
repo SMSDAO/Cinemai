@@ -1,7 +1,7 @@
 /**
  * Cinema Ingest Queue Processor
  * Handles the ingestion phase of cinema productions
- * 
+ *
  * Pipeline step 1: INGEST
  * - Receives photo + script
  * - Preprocesses assets
@@ -12,11 +12,7 @@ export class CinemaIngestQueue {
   /**
    * Process cinema ingest job
    */
-  async process(job: {
-    productionId: string;
-    photoUrl: string;
-    script: string;
-  }): Promise<void> {
+  async process(job: { productionId: string; photoUrl: string; script: string }): Promise<void> {
     // TODO: Implement ingest logic
     // 1. Download and validate photo
     // 2. Analyze image (resolution, format, content)

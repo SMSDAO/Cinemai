@@ -13,12 +13,12 @@ export class AuthMiddleware implements NestMiddleware {
     // 2. Verify JWT token
     // 3. Attach user to request object
     // 4. Call next()
-    
+
     const authHeader = req.headers.authorization;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
-      
+
       // TODO: Verify token and decode user
       // For now, attach a mock user
       (req as any).user = {
@@ -26,7 +26,7 @@ export class AuthMiddleware implements NestMiddleware {
         email: 'user@example.com',
       };
     }
-    
+
     next();
   }
 }

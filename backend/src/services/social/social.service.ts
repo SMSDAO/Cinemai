@@ -12,12 +12,15 @@ export class SocialService {
   /**
    * Connect a social account
    */
-  async connectAccount(userId: string, data: {
-    platform: 'tiktok' | 'instagram' | 'youtube' | 'x';
-    accessToken: string;
-    refreshToken?: string;
-    accountName: string;
-  }): Promise<any> {
+  async connectAccount(
+    userId: string,
+    data: {
+      platform: 'tiktok' | 'instagram' | 'youtube' | 'x';
+      accessToken: string;
+      refreshToken?: string;
+      accountName: string;
+    },
+  ): Promise<any> {
     // TODO: Integrate with Prisma
     // 1. Encrypt tokens
     // 2. Store account credentials
@@ -85,7 +88,10 @@ export class SocialService {
   /**
    * Handle OAuth callback
    */
-  async handleOAuthCallback(platform: string, code: string): Promise<{
+  async handleOAuthCallback(
+    platform: string,
+    code: string,
+  ): Promise<{
     accessToken: string;
     refreshToken?: string;
     accountName: string;

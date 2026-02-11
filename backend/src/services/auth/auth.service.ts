@@ -15,15 +15,19 @@ export class AuthService {
   /**
    * Sign up a new user
    */
-  async signup(email: string, password: string, name?: string): Promise<{ user: any; token: string }> {
+  async signup(
+    email: string,
+    password: string,
+    name?: string,
+  ): Promise<{ user: any; token: string }> {
     // TODO: Integrate with Prisma and JWT
     // 1. Hash password
     // 2. Create user in database
     // 3. Generate JWT token
     return {
-      user: { 
-        id: 'user_id', 
-        email, 
+      user: {
+        id: 'user_id',
+        email,
         name,
         role: 'user',
         isFirstLogin: true,
@@ -36,20 +40,23 @@ export class AuthService {
   /**
    * Login existing user
    */
-  async login(email: string, password: string): Promise<{ user: any; token: string; mustChangePassword: boolean }> {
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ user: any; token: string; mustChangePassword: boolean }> {
     // TODO: Integrate with Prisma and JWT
     // 1. Find user by email
     // 2. Verify password
     // 3. Check if first login or must change password
     // 4. Generate JWT token
     // 5. Update last login timestamp
-    
+
     const isAdmin = email === 'admin@admin.com';
     const isFirstLogin = isAdmin && password === 'admin123';
-    
+
     return {
-      user: { 
-        id: isAdmin ? 'admin_id' : 'user_id', 
+      user: {
+        id: isAdmin ? 'admin_id' : 'user_id',
         email,
         role: isAdmin ? 'admin' : 'user',
         isFirstLogin,
@@ -62,7 +69,11 @@ export class AuthService {
   /**
    * Change user password
    */
-  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ success: boolean }> {
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{ success: boolean }> {
     // TODO: Integrate with Prisma
     // 1. Verify current password
     // 2. Hash new password

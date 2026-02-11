@@ -1,7 +1,7 @@
 /**
  * Social Publish Queue Processor
  * Handles publishing content to social platforms
- * 
+ *
  * Growth Pipeline: PUBLISH → SCHEDULE → METRICS
  * - Publishes content to TikTok, Instagram, YouTube, X
  * - Handles OAuth and API calls

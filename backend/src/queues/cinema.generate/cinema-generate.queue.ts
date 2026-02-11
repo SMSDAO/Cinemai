@@ -1,7 +1,7 @@
 /**
  * Cinema Generate Queue Processor
  * Handles video and audio generation for cinema productions
- * 
+ *
  * Pipeline steps 4-5: VISUAL GENERATION → AUDIO GENERATION
  * - Generates video clips for each scene
  * - Synthesizes voiceover

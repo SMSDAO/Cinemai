@@ -13,11 +13,7 @@ export class YouTubeClient {
   /**
    * Upload video to YouTube
    */
-  async uploadVideo(
-    videoUrl: string,
-    title: string,
-    description: string,
-  ): Promise<string> {
+  async uploadVideo(videoUrl: string, title: string, description: string): Promise<string> {
     // TODO: Integrate with YouTube Data API
     // 1. Initialize resumable upload
     // 2. Upload video chunks

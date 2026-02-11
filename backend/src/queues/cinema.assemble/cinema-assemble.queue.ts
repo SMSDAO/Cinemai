@@ -1,7 +1,7 @@
 /**
  * Cinema Assemble Queue Processor
  * Handles assembly of video clips before final rendering
- * 
+ *
  * Pipeline step 6: ASSEMBLY
  * - Combines all generated video clips
  * - Syncs audio with video

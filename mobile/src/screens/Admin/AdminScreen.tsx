@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { NeoGlowCard } from '../../components/NeoGlowCard/NeoGlowCard';
 import { NeoGlowButton } from '../../components/NeoGlowButton/NeoGlowButton';
-import { tokens } from '../../theme/tokens';
+import { colors, spacing, typography } from '../../theme/tokens';
 
 interface AdminScreenProps {
   navigation: any;
@@ -70,7 +70,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ navigation }) => {
       style={styles.container}
       contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={tokens.colors.primary.cyan} />
+        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.glow.primary} />
       }
     >
       <View style={styles.header}>
@@ -81,7 +81,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ navigation }) => {
       {/* System Health */}
       <NeoGlowCard style={styles.healthCard}>
         <View style={styles.healthIndicator}>
-          <View style={[styles.healthDot, { backgroundColor: tokens.colors.success.main }]} />
+          <View style={[styles.healthDot, { backgroundColor: colors.semantic.success }]} />
           <Text style={styles.healthText}>
             System Status: {dashboardData?.systemHealth?.toUpperCase()}
           </Text>
@@ -143,35 +143,35 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background.dark900,
+    backgroundColor: colors.bg.primary,
   },
   content: {
-    padding: tokens.spacing.lg,
+    padding: spacing[4],
   },
   loadingText: {
-    color: tokens.colors.text.primary,
-    fontSize: tokens.typography.fontSize.lg,
+    color: colors.text.primary,
+    fontSize: typography.size.lg,
     textAlign: 'center',
-    marginTop: tokens.spacing.xl,
+    marginTop: spacing[6],
   },
   header: {
-    marginBottom: tokens.spacing.xl,
+    marginBottom: spacing[6],
   },
   title: {
-    fontSize: tokens.typography.fontSize['3xl'],
-    fontFamily: tokens.typography.fontFamily.heading,
+    fontSize: typography.size['3xl'],
+    fontFamily: typography.family.display,
     fontWeight: '700',
-    color: tokens.colors.text.primary,
-    marginBottom: tokens.spacing.xs,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
   },
   subtitle: {
-    fontSize: tokens.typography.fontSize.base,
-    fontFamily: tokens.typography.fontFamily.body,
-    color: tokens.colors.text.secondary,
+    fontSize: typography.size.md,
+    fontFamily: typography.family.primary,
+    color: colors.text.secondary,
   },
   healthCard: {
-    marginBottom: tokens.spacing.lg,
-    padding: tokens.spacing.md,
+    marginBottom: spacing[4],
+    padding: spacing[3],
   },
   healthIndicator: {
     flexDirection: 'row',
@@ -181,50 +181,50 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: tokens.spacing.sm,
+    marginRight: spacing[2],
   },
   healthText: {
-    fontSize: tokens.typography.fontSize.base,
-    fontFamily: tokens.typography.fontFamily.body,
+    fontSize: typography.size.md,
+    fontFamily: typography.family.primary,
     fontWeight: '600',
-    color: tokens.colors.text.primary,
+    color: colors.text.primary,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacing.xl,
+    marginBottom: spacing[6],
   },
   statCard: {
     width: '48%',
-    padding: tokens.spacing.md,
-    marginBottom: tokens.spacing.md,
+    padding: spacing[3],
+    marginBottom: spacing[3],
     alignItems: 'center',
   },
   statValue: {
-    fontSize: tokens.typography.fontSize['3xl'],
-    fontFamily: tokens.typography.fontFamily.heading,
+    fontSize: typography.size['3xl'],
+    fontFamily: typography.family.display,
     fontWeight: '700',
-    color: tokens.colors.primary.cyan,
-    marginBottom: tokens.spacing.xs,
+    color: colors.glow.primary,
+    marginBottom: spacing[1],
   },
   statLabel: {
-    fontSize: tokens.typography.fontSize.sm,
-    fontFamily: tokens.typography.fontFamily.body,
-    color: tokens.colors.text.secondary,
+    fontSize: typography.size.sm,
+    fontFamily: typography.family.primary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   actions: {
-    marginBottom: tokens.spacing.xl,
+    marginBottom: spacing[6],
   },
   actionsTitle: {
-    fontSize: tokens.typography.fontSize.xl,
-    fontFamily: tokens.typography.fontFamily.heading,
+    fontSize: typography.size.xl,
+    fontFamily: typography.family.display,
     fontWeight: '600',
-    color: tokens.colors.text.primary,
-    marginBottom: tokens.spacing.md,
+    color: colors.text.primary,
+    marginBottom: spacing[3],
   },
   actionButton: {
-    marginBottom: tokens.spacing.md,
+    marginBottom: spacing[3],
   },
 });

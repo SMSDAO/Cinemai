@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { shortsService, Short, ShortVariant, CreateShortData } from '../services/shorts.service';
+import { shortsService, Short, CreateShortData } from '../services/shorts.service';
 
 export const useShorts = () => {
   const [shorts, setShorts] = useState<Short[]>([]);

@@ -12,11 +12,14 @@ export class ShortsService {
   /**
    * Create a new short
    */
-  async createShort(userId: string, data: {
-    title: string;
-    idea: string;
-    format?: string;
-  }): Promise<any> {
+  async createShort(
+    userId: string,
+    data: {
+      title: string;
+      idea: string;
+      format?: string;
+    },
+  ): Promise<any> {
     // TODO: Integrate with Prisma
     // 1. Create short record
     // 2. Queue hook generation

@@ -15,7 +15,9 @@ import { colors, spacing, typography } from '../../theme/tokens';
 export const HomeScreen = () => {
   const { user } = useAuth();
   const { productions, loading: loadingProductions } = useProductions();
-  const { shorts, loading: loadingShorts } = useShorts();
+  const { shorts } = useShorts();
+  // loadingShorts available for future use
+  // const { loading: loadingShorts } = useShorts();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -46,12 +48,16 @@ export const HomeScreen = () => {
         <Text style={styles.sectionTitle}>Quick Start</Text>
         <NeoGlowButton
           title="🎬 Create Cinema"
-          onPress={() => {}}
+          onPress={() => {
+            // TODO: Navigate to Cinema screen
+          }}
           style={styles.actionButton}
         />
         <NeoGlowButton
           title="🎞 Create Short"
-          onPress={() => {}}
+          onPress={() => {
+            // TODO: Navigate to Shorts screen
+          }}
           variant="secondary"
           style={styles.actionButton}
         />

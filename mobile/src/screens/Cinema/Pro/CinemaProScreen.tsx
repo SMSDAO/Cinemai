@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
+import { Text, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
 import { UploadBox } from '../../../components/UploadBox/UploadBox';
 import { NeoGlowButton } from '../../../components/NeoGlowButton/NeoGlowButton';
 import { NeoGlowCard } from '../../../components/NeoGlowCard/NeoGlowCard';
@@ -87,7 +87,7 @@ export const CinemaProScreen = () => {
       <NeoGlowCard style={styles.card}>
         <Text style={styles.label}>Cinematic Style</Text>
         <StylePicker
-          styles={CINEMATIC_STYLES}
+          availableStyles={CINEMATIC_STYLES}
           selectedStyle={selectedStyle}
           onSelectStyle={setSelectedStyle}
         />

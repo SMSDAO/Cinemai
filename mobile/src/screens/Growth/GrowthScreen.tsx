@@ -20,7 +20,8 @@ const PLATFORMS = [
 
 export const GrowthScreen = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const { shortsAnalytics, productionsAnalytics, loading } = useAnalytics();
+  // Analytics data (placeholder for future implementation)
+  // const { shortsAnalytics, productionsAnalytics, loading } = useAnalytics();
 
   const togglePlatform = (platformId: string) => {
     setSelectedPlatforms((prev) =>
@@ -67,12 +68,16 @@ export const GrowthScreen = () => {
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <NeoGlowButton
           title="📤 Schedule Post"
-          onPress={() => {}}
+          onPress={() => {
+            // TODO: Navigate to schedule post screen
+          }}
           style={styles.actionButton}
         />
         <NeoGlowButton
           title="📅 View Calendar"
-          onPress={() => {}}
+          onPress={() => {
+            // TODO: Navigate to calendar screen
+          }}
           variant="secondary"
         />
       </View>

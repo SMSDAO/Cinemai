@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { NeoGlowButton } from '../../components/NeoGlowButton/NeoGlowButton';
-import { tokens } from '../../theme/tokens';
+import { colors, spacing, typography } from '../../theme/tokens';
 
 interface ChangePasswordScreenProps {
   navigation: any;
@@ -21,7 +21,8 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
   const [isLoading, setIsLoading] = useState(false);
 
   const isFirstLogin = route.params?.isFirstLogin || false;
-  const userId = route.params?.userId;
+  // userId is available for future use if needed
+  // const userId = route.params?.userId;
 
   const handleChangePassword = async () => {
     // Validation
@@ -88,7 +89,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
             value={currentPassword}
             onChangeText={setCurrentPassword}
             placeholder="Enter current password"
-            placeholderTextColor={tokens.colors.text.tertiary}
+            placeholderTextColor={colors.text.muted}
             secureTextEntry
             autoCapitalize="none"
           />
@@ -101,7 +102,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
             value={newPassword}
             onChangeText={setNewPassword}
             placeholder="Enter new password (min 8 characters)"
-            placeholderTextColor={tokens.colors.text.tertiary}
+            placeholderTextColor={colors.text.muted}
             secureTextEntry
             autoCapitalize="none"
           />
@@ -114,7 +115,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             placeholder="Re-enter new password"
-            placeholderTextColor={tokens.colors.text.tertiary}
+            placeholderTextColor={colors.text.muted}
             secureTextEntry
             autoCapitalize="none"
           />
@@ -151,73 +152,73 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navi
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: tokens.colors.background.dark900,
-    padding: tokens.spacing.lg,
+    backgroundColor: colors.bg.primary,
+    padding: spacing[4],
   },
   header: {
-    marginBottom: tokens.spacing.xl,
-    marginTop: tokens.spacing.xl,
+    marginBottom: spacing[6],
+    marginTop: spacing[6],
   },
   title: {
-    fontSize: tokens.typography.fontSize['3xl'],
-    fontFamily: tokens.typography.fontFamily.heading,
+    fontSize: typography.size['3xl'],
+    fontFamily: typography.family.display,
     fontWeight: '700',
-    color: tokens.colors.text.primary,
-    marginBottom: tokens.spacing.sm,
+    color: colors.text.primary,
+    marginBottom: spacing[2],
   },
   subtitle: {
-    fontSize: tokens.typography.fontSize.base,
-    fontFamily: tokens.typography.fontFamily.body,
-    color: tokens.colors.text.secondary,
+    fontSize: typography.size.md,
+    fontFamily: typography.family.primary,
+    color: colors.text.secondary,
     lineHeight: 24,
   },
   form: {
-    marginBottom: tokens.spacing.xl,
+    marginBottom: spacing[6],
   },
   inputGroup: {
-    marginBottom: tokens.spacing.lg,
+    marginBottom: spacing[4],
   },
   label: {
-    fontSize: tokens.typography.fontSize.sm,
-    fontFamily: tokens.typography.fontFamily.body,
+    fontSize: typography.size.sm,
+    fontFamily: typography.family.primary,
     fontWeight: '600',
-    color: tokens.colors.text.secondary,
-    marginBottom: tokens.spacing.xs,
+    color: colors.text.secondary,
+    marginBottom: spacing[1],
   },
   input: {
-    backgroundColor: tokens.colors.background.dark800,
+    backgroundColor: colors.bg.secondary,
     borderWidth: 1,
-    borderColor: tokens.colors.primary.cyan,
-    borderRadius: tokens.borderRadius.md,
-    padding: tokens.spacing.md,
-    fontSize: tokens.typography.fontSize.base,
-    fontFamily: tokens.typography.fontFamily.body,
-    color: tokens.colors.text.primary,
+    borderColor: colors.glow.primary,
+    borderRadius: 16,
+    padding: spacing[3],
+    fontSize: typography.size.md,
+    fontFamily: typography.family.primary,
+    color: colors.text.primary,
   },
   button: {
-    marginTop: tokens.spacing.lg,
+    marginTop: spacing[4],
   },
   cancelButton: {
-    marginTop: tokens.spacing.md,
+    marginTop: spacing[3],
   },
   requirements: {
-    backgroundColor: tokens.colors.background.dark800,
-    borderRadius: tokens.borderRadius.md,
-    padding: tokens.spacing.md,
+    backgroundColor: colors.bg.secondary,
+    borderRadius: 16,
+    padding: spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: tokens.colors.primary.cyan,
+    borderLeftColor: colors.glow.primary,
   },
   requirementsTitle: {
-    fontSize: tokens.typography.fontSize.sm,
-    fontFamily: tokens.typography.fontFamily.body,
+    fontSize: typography.size.sm,
+    fontFamily: typography.family.primary,
     fontWeight: '600',
-    color: tokens.colors.text.primary,
-    marginBottom: tokens.spacing.xs,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
   },
   requirement: {
-    fontSize: tokens.typography.fontSize.sm,
-    fontFamily: tokens.typography.fontFamily.body,
-    color: tokens.colors.text.secondary,
-    marginTop: tokens.spacing.xs,
+    fontSize: typography.size.sm,
+    fontFamily: typography.family.primary,
+    color: colors.text.secondary,
+    marginTop: spacing[1],
   },
 });

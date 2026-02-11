@@ -1,7 +1,7 @@
 /**
  * Social Metrics Queue Processor
  * Handles metrics collection from social platforms
- * 
+ *
  * Growth Pipeline: METRICS → INSIGHTS
  * - Collects views, likes, shares, comments
  * - Stores metrics in database
