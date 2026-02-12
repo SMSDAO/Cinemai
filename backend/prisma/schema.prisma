@@ -91,6 +91,10 @@ enum SubscriptionStatus {
   UNPAID
 }
 
+enum SubscriptionPlan {
+  PRO
+}
+
 // ============================================================================
 // USER MODEL
 // ============================================================================
@@ -190,6 +194,7 @@ model ShortVariant {
   
   short         Short    @relation(fields: [shortId], references: [id], onDelete: Cascade)
   
+  @@unique([shortId, variantNumber])
   @@index([shortId])
 }
 
@@ -276,7 +281,7 @@ model Trip {
   userId           String
   amount           Decimal    @db.Decimal(10, 2)
   quantity         Int
-  paymentIntentId  String
+  paymentIntentId  String     @unique
   status           TripStatus @default(PENDING)
   createdAt        DateTime   @default(now())
   
@@ -307,7 +312,7 @@ model Subscription {
   userId               String
   stripeSubscriptionId String             @unique
   status               SubscriptionStatus @default(ACTIVE)
-  plan                 String
+  plan                 SubscriptionPlan   @default(PRO)
   amount               Decimal            @db.Decimal(10, 2)
   currentPeriodStart   DateTime
   currentPeriodEnd     DateTime
