@@ -95,6 +95,16 @@ enum SubscriptionPlan {
   PRO
 }
 
+enum EventType {
+  PRODUCTION_CREATED
+  PRODUCTION_COMPLETED
+  SHORT_CREATED
+  SHORT_COMPLETED
+  POST_PUBLISHED
+  USER_FOLLOWED
+  CONTENT_LIKED
+}
+
 // ============================================================================
 // USER MODEL
 // ============================================================================
@@ -103,6 +113,8 @@ model User {
   id                String           @id @default(cuid())
   email             String           @unique
   name              String?
+  handle            String?          @unique
+  bio               String?          @db.Text
   passwordHash      String
   role              UserRole         @default(USER)
   avatarUrl         String?
@@ -111,6 +123,7 @@ model User {
   isFirstLogin      Boolean          @default(true)
   mustChangePassword Boolean         @default(false)
   lastLoginAt       DateTime?
+  stats             Json?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   
@@ -122,6 +135,11 @@ model User {
   trips            Trip[]
   payments         Payment[]
   subscriptions    Subscription[]
+  followers        Follow[]         @relation("UserFollowers")
+  following        Follow[]         @relation("UserFollowing")
+  likes            Like[]
+  timelineEvents   TimelineEvent[]
+  streamSessions   StreamSession[]
 }
 
 // ============================================================================
@@ -324,4 +342,74 @@ model Subscription {
   
   @@index([userId])
   @@index([status])
+}
+
+// ============================================================================
+// SOCIAL GRAPH MODELS
+// ============================================================================
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Like {
+  id          String   @id @default(cuid())
+  userId      String
+  contentId   String
+  contentType String
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, contentId, contentType])
+  @@index([userId])
+  @@index([contentId])
+}
+
+// ============================================================================
+// TIMELINE MODEL
+// ============================================================================
+
+model TimelineEvent {
+  id          String    @id @default(cuid())
+  userId      String
+  eventType   EventType
+  contentId   String?
+  contentType String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// SYNC MODEL
+// ============================================================================
+
+model StreamSession {
+  id          String   @id @default(cuid())
+  userId      String
+  lastSyncAt  DateTime @default(now())
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([lastSyncAt])
 }

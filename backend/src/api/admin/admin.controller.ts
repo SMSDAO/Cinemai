@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query } from '@nestjs/common';
+import { AdminService } from '../../services/admin/admin.service';
 
 /**
  * Admin Controller
@@ -13,22 +14,18 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nes
  */
 @Controller('admin')
 export class AdminController {
+  constructor(private readonly adminService: AdminService) {}
+
   /**
    * Admin dashboard
    * GET /admin
    */
   @Get()
   async getDashboard(): Promise<any> {
-    // TODO: Implement admin dashboard with system stats
+    const data = await this.adminService.getDashboard();
     return {
       success: true,
-      data: {
-        totalUsers: 0,
-        totalProductions: 0,
-        totalShorts: 0,
-        activeSubscriptions: 0,
-        systemHealth: 'healthy',
-      },
+      data,
     };
   }
 
@@ -37,16 +34,13 @@ export class AdminController {
    * GET /admin/users
    */
   @Get('users')
-  async getUsers(): Promise<any> {
-    // TODO: Implement user list with pagination
+  async getUsers(@Query('page') page?: string, @Query('limit') limit?: string): Promise<any> {
+    const parsedPage = page ? parseInt(page, 10) : 1;
+    const parsedLimit = limit ? parseInt(limit, 10) : 20;
+    const data = await this.adminService.getUsers(parsedPage, parsedLimit);
     return {
       success: true,
-      data: {
-        users: [],
-        total: 0,
-        page: 1,
-        limit: 20,
-      },
+      data,
     };
   }
 
@@ -56,14 +50,10 @@ export class AdminController {
    */
   @Get('users/:id')
   async getUser(@Param('id') userId: string): Promise<any> {
-    // TODO: Implement user details
+    const data = await this.adminService.getUser(userId);
     return {
       success: true,
-      data: {
-        id: userId,
-        email: 'user@example.com',
-        role: 'user',
-      },
+      data,
     };
   }
 
@@ -73,13 +63,10 @@ export class AdminController {
    */
   @Put('users/:id')
   async updateUser(@Param('id') userId: string, @Body() updateData: any): Promise<any> {
-    // TODO: Implement user update
+    const data = await this.adminService.updateUser(userId, updateData);
     return {
       success: true,
-      data: {
-        id: userId,
-        ...updateData,
-      },
+      data,
     };
   }
 
@@ -89,7 +76,7 @@ export class AdminController {
    */
   @Delete('users/:id')
   async deleteUser(@Param('id') userId: string): Promise<any> {
-    // TODO: Implement user deletion
+    await this.adminService.deleteUser(userId);
     return {
       success: true,
       message: 'User deleted successfully',
@@ -132,15 +119,23 @@ export class AdminController {
    */
   @Get('analytics')
   async getAnalytics(): Promise<any> {
-    // TODO: Implement analytics data
+    const data = await this.adminService.getAnalytics();
     return {
       success: true,
-      data: {
-        dailyActiveUsers: 0,
-        monthlyActiveUsers: 0,
-        totalRevenue: 0,
-        productionsCreated: 0,
-      },
+      data,
+    };
+  }
+
+  /**
+   * Get system health
+   * GET /admin/health
+   */
+  @Get('health')
+  async getSystemHealth(): Promise<any> {
+    const data = await this.adminService.getSystemHealth();
+    return {
+      success: true,
+      data,
     };
   }
 }
