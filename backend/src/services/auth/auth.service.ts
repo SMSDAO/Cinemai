@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../../prisma/prisma.service';
+import { signToken, verifyToken } from '../../utils/jwt/jwt.helper';
+import { UserRole } from '@prisma/client';
 
 /**
  * Auth Service
@@ -12,6 +16,8 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class AuthService {
+  constructor(private prisma: PrismaService) {}
+
   /**
    * Sign up a new user
    */
@@ -20,20 +26,47 @@ export class AuthService {
     password: string,
     name?: string,
   ): Promise<{ user: any; token: string }> {
-    // TODO: Integrate with Prisma and JWT
-    // 1. Hash password
-    // 2. Create user in database
-    // 3. Generate JWT token
-    return {
-      user: {
-        id: 'user_id',
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new Error('User already exists');
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create user in database
+    const user = await this.prisma.user.create({
+      data: {
         email,
+        passwordHash,
         name,
-        role: 'user',
+        role: UserRole.USER,
         isFirstLogin: true,
         mustChangePassword: false,
       },
-      token: 'jwt_token_placeholder',
+    });
+
+    // Generate JWT token
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isFirstLogin: user.isFirstLogin,
+        mustChangePassword: user.mustChangePassword,
+      },
+      token,
     };
   }
 
@@ -44,25 +77,44 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ user: any; token: string; mustChangePassword: boolean }> {
-    // TODO: Integrate with Prisma and JWT
-    // 1. Find user by email
-    // 2. Verify password
-    // 3. Check if first login or must change password
-    // 4. Generate JWT token
-    // 5. Update last login timestamp
+    // Find user by email
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-    const isAdmin = email === 'admin@admin.com';
-    const isFirstLogin = isAdmin && password === 'admin123';
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!isValidPassword) {
+      throw new Error('Invalid credentials');
+    }
+
+    // Update last login timestamp
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    // Generate JWT token
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     return {
       user: {
-        id: isAdmin ? 'admin_id' : 'user_id',
-        email,
-        role: isAdmin ? 'admin' : 'user',
-        isFirstLogin,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isFirstLogin: user.isFirstLogin,
       },
-      token: 'jwt_token_placeholder',
-      mustChangePassword: isFirstLogin,
+      token,
+      mustChangePassword: user.mustChangePassword,
     };
   }
 
@@ -74,12 +126,34 @@ export class AuthService {
     currentPassword: string,
     newPassword: string,
   ): Promise<{ success: boolean }> {
-    // TODO: Integrate with Prisma
-    // 1. Verify current password
-    // 2. Hash new password
-    // 3. Update password in database
-    // 4. Set mustChangePassword to false
-    // 5. Set isFirstLogin to false
+    // Find user
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isValidPassword) {
+      throw new Error('Current password is incorrect');
+    }
+
+    // Hash new password
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+    // Update password in database
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        passwordHash: newPasswordHash,
+        mustChangePassword: false,
+        isFirstLogin: false,
+      },
+    });
+
     return {
       success: true,
     };
@@ -89,9 +163,30 @@ export class AuthService {
    * Refresh JWT token
    */
   async refresh(token: string): Promise<{ token: string }> {
-    // TODO: Verify and refresh token
+    // Verify token
+    const payload = verifyToken(token);
+    if (!payload) {
+      throw new Error('Invalid token');
+    }
+
+    // Verify user still exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Generate new token
+    const newToken = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
     return {
-      token: 'new_jwt_token_placeholder',
+      token: newToken,
     };
   }
 
@@ -99,33 +194,58 @@ export class AuthService {
    * Logout user
    */
   async logout(userId: string): Promise<void> {
-    // TODO: Invalidate session/token
+    // Note: JWT tokens are stateless, so logout is typically handled client-side
+    // by removing the token. For enhanced security, implement a token blacklist
+    // or use refresh tokens with revocation.
+    // userId parameter kept for future token blacklist implementation
+    void userId;
   }
 
   /**
    * Validate JWT token
    */
   async validateToken(token: string): Promise<any> {
-    // TODO: Verify JWT token
-    return { id: 'user_id', email: 'user@example.com', role: 'user' };
+    const payload = verifyToken(token);
+    if (!payload) {
+      return null;
+    }
+
+    // Verify user still exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.userId },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    };
   }
 
   /**
    * OAuth login (Google, Apple)
    */
   async oauthLogin(provider: string, accessToken: string): Promise<{ user: any; token: string }> {
-    // TODO: Integrate with OAuth providers
-    return {
-      user: { id: 'user_id', email: 'oauth@example.com', role: 'user' },
-      token: 'jwt_token_placeholder',
-    };
+    // TODO: Integrate with OAuth providers (Google, Apple)
+    // This requires provider-specific SDKs and configuration
+    void provider;
+    void accessToken;
+    throw new Error('OAuth integration not yet implemented');
   }
 
   /**
    * Check if user is admin
    */
   async isAdmin(userId: string): Promise<boolean> {
-    // TODO: Check user role in database
-    return userId === 'admin_id';
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    return user?.role === UserRole.ADMIN;
   }
 }
