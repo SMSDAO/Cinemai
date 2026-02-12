@@ -32,12 +32,12 @@ WORKDIR /app
 
 # Copy package files and install production dependencies only
 COPY --chown=nodejs:nodejs backend/package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 RUN npm ci --only=production && \
     npm cache clean --force
 
 # Copy built artifacts
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 
 # Switch to non-root user
 USER nodejs
