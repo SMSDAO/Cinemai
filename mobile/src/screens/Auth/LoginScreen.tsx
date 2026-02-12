@@ -6,11 +6,17 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from '../../navigation/AuthStack';
 import { colors, typography, spacing } from '../../theme/tokens';
 import { Input, NeoGlowButton, useToast } from '../../components';
 import { useAuth } from '../../hooks';
 
+type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+
 export const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -95,7 +101,7 @@ export const LoginScreen: React.FC = () => {
 
       <View style={styles.signupPrompt}>
         <Text style={styles.signupText}>Don't have an account? </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
           <Text style={styles.signupLink}>Sign Up</Text>
         </TouchableOpacity>
       </View>

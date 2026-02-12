@@ -11,14 +11,19 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from '../../navigation/AuthStack';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/Toast/ToastContext';
 import { Input, NeoGlowButton } from '../../components';
 
+type SignupScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Signup'>;
+
 export const SignupScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<SignupScreenNavigationProp>();
   const { signup } = useAuth();
   const { showToast } = useToast();
 
