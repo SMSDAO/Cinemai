@@ -9,7 +9,7 @@ COPY backend/tsconfig.json ./
 COPY backend/prisma ./prisma/
 
 # Install dependencies
-RUN npm ci --only=production && \
+RUN npm ci && \
     npm cache clean --force
 
 # Copy source
