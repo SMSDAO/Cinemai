@@ -87,8 +87,10 @@ export class BillingService {
       throw new Error('User not found');
     }
 
-    let customerId = user.email;
-    const subscriptionData = await this.stripeClient.createSubscription(customerId, priceId);
+    // TODO: Store Stripe customer ID on User model for production
+    // For now, using email as identifier (Stripe client creates customer if needed)
+    const customerEmail = user.email;
+    const subscriptionData = await this.stripeClient.createSubscription(customerEmail, priceId);
 
     const subscription = await this.prisma.subscription.create({
       data: {
