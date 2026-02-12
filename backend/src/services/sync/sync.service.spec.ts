@@ -21,6 +21,7 @@ const mockPrisma = {
   },
   socialPost: {
     findMany: jest.fn(),
+    count: jest.fn(),
   },
 };
 

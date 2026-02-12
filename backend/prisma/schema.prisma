@@ -135,8 +135,8 @@ model User {
   trips            Trip[]
   payments         Payment[]
   subscriptions    Subscription[]
-  followers        Follow[]         @relation("UserFollowers")
-  following        Follow[]         @relation("UserFollowing")
+  followers        Follow[]         @relation("UserFollowing")
+  following        Follow[]         @relation("UserFollowers")
   likes            Like[]
   timelineEvents   TimelineEvent[]
   streamSessions   StreamSession[]
@@ -394,6 +394,8 @@ model TimelineEvent {
   @@index([userId])
   @@index([eventType])
   @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([userId, eventType, createdAt])
 }
 
 // ============================================================================

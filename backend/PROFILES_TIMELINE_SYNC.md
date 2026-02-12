@@ -17,8 +17,8 @@ This implementation adds comprehensive user profile management, activity trackin
 - Social connections tracked in database
 
 ### 3. Timeline Events
-- Automatic timeline event creation for user activities
-- Event types: `PRODUCTION_CREATED`, `PRODUCTION_COMPLETED`, `SHORT_CREATED`, `SHORT_COMPLETED`, `POST_PUBLISHED`, `USER_FOLLOWED`, `CONTENT_LIKED`
+- Automatic timeline event creation for user activities (using transactions for atomicity)
+- Event types (7 total): `PRODUCTION_CREATED`, `PRODUCTION_COMPLETED`, `SHORT_CREATED`, `SHORT_COMPLETED`, `POST_PUBLISHED`, `USER_FOLLOWED`, `CONTENT_LIKED`
 - Three timeline views: user timeline, following timeline, global timeline
 
 ### 4. Dashboard
@@ -153,33 +153,29 @@ model StreamSession {
 
 ### Production Creation → Timeline Event
 
-1. User creates a production via `POST /productions`
-2. `CinemaService.createProduction()` creates the production record
-3. Service automatically creates a `PRODUCTION_CREATED` timeline event
-4. Timeline event appears in user's timeline and global feed
-5. When production completes, `PRODUCTION_COMPLETED` event is created
-6. Dashboard updates automatically with new production count
-7. Sync service detects changes and notifies connected clients
+1. User creates a production via `POST /cinema/productions`
+2. `CinemaService.createProduction()` creates the production record and timeline event in a transaction
+3. Timeline event appears in user's timeline and global feed
+4. When production completes, `PRODUCTION_COMPLETED` event is created in a transaction with the status update
+5. Dashboard updates automatically with new production count
+6. Sync service detects changes and notifies connected clients
 
 ### Short Creation → Timeline Event
 
 1. User creates a short via `POST /shorts`
-2. `ShortsService.createShort()` creates the short record
-3. Service automatically creates a `SHORT_CREATED` timeline event
-4. Timeline event appears in user's timeline
-5. When short completes, `SHORT_COMPLETED` event is created
-6. Dashboard analytics update with new metrics
+2. `ShortsService.createShort()` creates the short record and timeline event in a transaction
+3. Timeline event appears in user's timeline
+4. When short completes, `SHORT_COMPLETED` event is created in a transaction with the status update
+5. Dashboard analytics update with new metrics
 
 ## Testing
 
 All services have comprehensive unit tests:
-- `timeline.service.spec.ts` - 4 tests
-- `dashboard.service.spec.ts` - 2 tests
-- `sync.service.spec.ts` - 4 tests
-- `admin.service.spec.ts` - 7 tests
-- `user.service.spec.ts` - 4 tests (including new getUserStats)
-
-Total: 46 tests passing
+- `timeline.service.spec.ts` - Timeline event creation and feed fetching
+- `dashboard.service.spec.ts` - Dashboard data aggregation and analytics
+- `sync.service.spec.ts` - Sync session management and polling
+- `admin.service.spec.ts` - User management and system health
+- `user.service.spec.ts` - User profile and stats
 
 Run tests with:
 ```bash
@@ -190,8 +186,8 @@ npm test
 
 - All new services follow NestJS dependency injection pattern
 - PrismaService is used for all database operations
-- Timeline events are created transactionally within the same database operation
-- Sync service uses polling mechanism (can be upgraded to WebSockets later)
+- Timeline events are created using Prisma transactions to ensure atomicity with parent operations
+- Sync service uses cursor-based pagination and only advances lastSyncAt when no more pages remain
 - Admin endpoints should be protected with admin role guard (TODO)
 
 ## Future Enhancements
@@ -201,7 +197,7 @@ npm test
 3. Implement like/unlike API endpoints
 4. Add notification system based on timeline events
 5. Add admin authentication and role guards
-6. Add pagination cursors for timeline feeds
+6. Add response shape consistency across all controllers
 7. Add timeline event filtering by event type
 8. Add user search functionality
 9. Add privacy settings for user profiles

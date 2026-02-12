@@ -90,12 +90,31 @@ export class SyncService {
       }),
     ]);
 
-    // Update sync timestamp
-    if (session) {
+    const hasMore =
+      productions.length === 50 ||
+      shorts.length === 50 ||
+      timelineEvents.length === 50 ||
+      socialPosts.length === 50;
+
+    // Only update sync timestamp if no more pages remain
+    if (session && !hasMore) {
       await this.prisma.streamSession.update({
         where: { id: session.id },
         data: { lastSyncAt: new Date() },
       });
+    }
+
+    // Calculate next cursor based on oldest timestamp in results
+    let nextSince: Date | undefined;
+    if (hasMore) {
+      const timestamps: Date[] = [];
+      if (productions.length > 0) timestamps.push(productions[productions.length - 1].updatedAt);
+      if (shorts.length > 0) timestamps.push(shorts[shorts.length - 1].updatedAt);
+      if (timelineEvents.length > 0)
+        timestamps.push(timelineEvents[timelineEvents.length - 1].createdAt);
+      if (socialPosts.length > 0) timestamps.push(socialPosts[socialPosts.length - 1].createdAt);
+      nextSince =
+        timestamps.length > 0 ? new Date(Math.min(...timestamps.map(t => t.getTime()))) : undefined;
     }
 
     return {
@@ -104,7 +123,8 @@ export class SyncService {
       timelineEvents,
       socialPosts,
       syncedAt: new Date(),
-      hasMore: productions.length === 50 || shorts.length === 50,
+      hasMore,
+      nextSince,
     };
   }
 
@@ -126,7 +146,7 @@ export class SyncService {
 
     // Check for changes since last sync
     const sinceDate = session.lastSyncAt;
-    const [productionChanges, shortChanges, eventChanges] = await Promise.all([
+    const [productionChanges, shortChanges, eventChanges, postChanges] = await Promise.all([
       this.prisma.production.count({
         where: {
           userId,
@@ -145,9 +165,16 @@ export class SyncService {
           createdAt: { gt: sinceDate },
         },
       }),
+      this.prisma.socialPost.count({
+        where: {
+          socialAccount: { userId },
+          createdAt: { gt: sinceDate },
+        },
+      }),
     ]);
 
-    const hasChanges = productionChanges > 0 || shortChanges > 0 || eventChanges > 0;
+    const hasChanges =
+      productionChanges > 0 || shortChanges > 0 || eventChanges > 0 || postChanges > 0;
 
     return {
       hasChanges,
@@ -155,6 +182,7 @@ export class SyncService {
         productions: productionChanges,
         shorts: shortChanges,
         events: eventChanges,
+        posts: postChanges,
       },
       lastSyncAt: session.lastSyncAt,
     };

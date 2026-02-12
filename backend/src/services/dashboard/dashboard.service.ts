@@ -37,7 +37,7 @@ export class DashboardService {
    * Get user information
    */
   private async getUserInfo(userId: string): Promise<any> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -51,6 +51,12 @@ export class DashboardService {
         stats: true,
       },
     });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   /**

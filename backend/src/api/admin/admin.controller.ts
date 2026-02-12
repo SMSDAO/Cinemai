@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { AdminService } from '../../services/admin/admin.service';
 
 /**
@@ -35,9 +35,18 @@ export class AdminController {
    */
   @Get('users')
   async getUsers(@Query('page') page?: string, @Query('limit') limit?: string): Promise<any> {
-    const parsedPage = page ? parseInt(page, 10) : 1;
-    const parsedLimit = limit ? parseInt(limit, 10) : 20;
-    const data = await this.adminService.getUsers(parsedPage, parsedLimit);
+    const DEFAULT_PAGE = 1;
+    const DEFAULT_LIMIT = 20;
+    const MAX_LIMIT = 100;
+
+    const rawPage = page !== undefined ? Number.parseInt(page, 10) : NaN;
+    const rawLimit = limit !== undefined ? Number.parseInt(limit, 10) : NaN;
+
+    const safePage = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : DEFAULT_PAGE;
+    const safeLimit =
+      Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : DEFAULT_LIMIT;
+
+    const data = await this.adminService.getUsers(safePage, safeLimit);
     return {
       success: true,
       data,

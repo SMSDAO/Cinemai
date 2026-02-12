@@ -16,6 +16,7 @@ const mockPrisma = {
   timelineEvent: {
     create: jest.fn(),
   },
+  $transaction: jest.fn(),
 };
 
 describe('ShortsService', () => {
@@ -35,7 +36,7 @@ describe('ShortsService', () => {
         format: '9:16',
       };
 
-      mockPrisma.short.create.mockResolvedValue({
+      const mockShort = {
         id: 'short_123',
         userId,
         title: data.title,
@@ -46,6 +47,19 @@ describe('ShortsService', () => {
         outputUrl: null,
         createdAt: new Date(),
         updatedAt: new Date(),
+      };
+
+      // Mock transaction to execute callback immediately
+      mockPrisma.$transaction.mockImplementation(async callback => {
+        const mockTx = {
+          short: {
+            create: jest.fn().mockResolvedValue(mockShort),
+          },
+          timelineEvent: {
+            create: jest.fn().mockResolvedValue({}),
+          },
+        };
+        return callback(mockTx);
       });
 
       const result = await shortsService.createShort(userId, data);
@@ -53,6 +67,7 @@ describe('ShortsService', () => {
       expect(result).toBeDefined();
       expect(result.id).toBe('short_123');
       expect(result.format).toBe(VideoFormat.PORTRAIT);
+      expect(mockPrisma.$transaction).toHaveBeenCalled();
     });
   });
 

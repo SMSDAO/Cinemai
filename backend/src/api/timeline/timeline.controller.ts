@@ -25,9 +25,18 @@ export class TimelineController {
     @Query('offset') offset?: string,
   ) {
     const userId = req.user?.id;
-    const parsedLimit = limit ? parseInt(limit, 10) : 20;
-    const parsedOffset = offset ? parseInt(offset, 10) : 0;
-    return this.timelineService.getUserTimeline(userId, parsedLimit, parsedOffset);
+    const DEFAULT_LIMIT = 20;
+    const MAX_LIMIT = 100;
+    const DEFAULT_OFFSET = 0;
+
+    const rawLimit = limit !== undefined ? Number.parseInt(limit, 10) : NaN;
+    const rawOffset = offset !== undefined ? Number.parseInt(offset, 10) : NaN;
+
+    const safeLimit =
+      Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : DEFAULT_LIMIT;
+    const safeOffset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : DEFAULT_OFFSET;
+
+    return this.timelineService.getUserTimeline(userId, safeLimit, safeOffset);
   }
 
   /**
@@ -41,9 +50,18 @@ export class TimelineController {
     @Query('offset') offset?: string,
   ) {
     const userId = req.user?.id;
-    const parsedLimit = limit ? parseInt(limit, 10) : 20;
-    const parsedOffset = offset ? parseInt(offset, 10) : 0;
-    return this.timelineService.getFollowingTimeline(userId, parsedLimit, parsedOffset);
+    const DEFAULT_LIMIT = 20;
+    const MAX_LIMIT = 100;
+    const DEFAULT_OFFSET = 0;
+
+    const rawLimit = limit !== undefined ? Number.parseInt(limit, 10) : NaN;
+    const rawOffset = offset !== undefined ? Number.parseInt(offset, 10) : NaN;
+
+    const safeLimit =
+      Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : DEFAULT_LIMIT;
+    const safeOffset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : DEFAULT_OFFSET;
+
+    return this.timelineService.getFollowingTimeline(userId, safeLimit, safeOffset);
   }
 
   /**
@@ -52,8 +70,17 @@ export class TimelineController {
    */
   @Get('global')
   async getGlobalTimeline(@Query('limit') limit?: string, @Query('offset') offset?: string) {
-    const parsedLimit = limit ? parseInt(limit, 10) : 20;
-    const parsedOffset = offset ? parseInt(offset, 10) : 0;
-    return this.timelineService.getGlobalTimeline(parsedLimit, parsedOffset);
+    const DEFAULT_LIMIT = 20;
+    const MAX_LIMIT = 100;
+    const DEFAULT_OFFSET = 0;
+
+    const rawLimit = limit !== undefined ? Number.parseInt(limit, 10) : NaN;
+    const rawOffset = offset !== undefined ? Number.parseInt(offset, 10) : NaN;
+
+    const safeLimit =
+      Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : DEFAULT_LIMIT;
+    const safeOffset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : DEFAULT_OFFSET;
+
+    return this.timelineService.getGlobalTimeline(safeLimit, safeOffset);
   }
 }
