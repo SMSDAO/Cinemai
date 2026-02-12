@@ -73,6 +73,17 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum PaymentType {
+  TRIP
+  SUBSCRIPTION
+}
+
+enum TripStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 enum SubscriptionStatus {
   ACTIVE
   CANCELED
@@ -95,6 +106,7 @@ model User {
   tripsRemaining    Int              @default(0)
   isFirstLogin      Boolean          @default(true)
   mustChangePassword Boolean         @default(false)
+  lastLoginAt       DateTime?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   
@@ -120,7 +132,7 @@ model Production {
   photoUrl    String
   style       String?
   status      ProductionStatus @default(PENDING)
-  videoUrl    String?
+  outputUrl   String?
   duration    Int?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -150,32 +162,33 @@ model Asset {
 // ============================================================================
 
 model Short {
-  id        String       @id @default(cuid())
-  userId    String
-  title     String
-  idea      String       @db.Text
-  format    VideoFormat  @default(PORTRAIT)
-  status    ShortStatus  @default(PENDING)
-  videoUrl  String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id           String       @id @default(cuid())
+  userId       String
+  title        String
+  idea         String       @db.Text
+  format       VideoFormat  @default(PORTRAIT)
+  status       ShortStatus  @default(PENDING)
+  selectedHook String?      @db.Text
+  outputUrl    String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  variants  ShortVariant[]
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variants     ShortVariant[]
   
   @@index([userId])
   @@index([status])
 }
 
 model ShortVariant {
-  id           String   @id @default(cuid())
-  shortId      String
-  hook         String   @db.Text
-  videoUrl     String?
-  captionStyle String   @default("default")
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid())
+  shortId       String
+  variantNumber Int
+  captionStyle  String   @default("default")
+  outputUrl     String?
+  createdAt     DateTime @default(now())
   
-  short        Short    @relation(fields: [shortId], references: [id], onDelete: Cascade)
+  short         Short    @relation(fields: [shortId], references: [id], onDelete: Cascade)
   
   @@index([shortId])
 }
@@ -259,13 +272,15 @@ model BrandKit {
 // ============================================================================
 
 model Trip {
-  id        String   @id @default(cuid())
-  userId    String
-  quantity  Int
-  usedCount Int      @default(0)
-  createdAt DateTime @default(now())
+  id               String     @id @default(cuid())
+  userId           String
+  amount           Decimal    @db.Decimal(10, 2)
+  quantity         Int
+  paymentIntentId  String
+  status           TripStatus @default(PENDING)
+  createdAt        DateTime   @default(now())
   
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@index([userId])
 }
@@ -273,8 +288,9 @@ model Trip {
 model Payment {
   id              String        @id @default(cuid())
   userId          String
-  amount          Float
+  amount          Decimal       @db.Decimal(10, 2)
   currency        String        @default("usd")
+  type            PaymentType
   stripePaymentId String        @unique
   status          PaymentStatus @default(PENDING)
   description     String?
@@ -287,17 +303,19 @@ model Payment {
 }
 
 model Subscription {
-  id                 String             @id @default(cuid())
-  userId             String
-  stripeSubscriptionId String           @unique
-  status             SubscriptionStatus @default(ACTIVE)
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                   String             @id @default(cuid())
+  userId               String
+  stripeSubscriptionId String             @unique
+  status               SubscriptionStatus @default(ACTIVE)
+  plan                 String
+  amount               Decimal            @db.Decimal(10, 2)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
   
-  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@index([userId])
   @@index([status])
