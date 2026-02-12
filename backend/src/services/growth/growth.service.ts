@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PostStatus, SocialPlatform, ProductionStatus, ShortStatus } from '@prisma/client';
 
 /**
  * Growth Service
@@ -114,6 +113,9 @@ export class GrowthService {
    * Get analytics for shorts
    */
   async getShortsAnalytics(userId: string, timeRange?: string): Promise<any> {
+    // TODO: Implement timeRange filtering
+    void timeRange;
+
     const shorts = await this.prisma.short.findMany({
       where: { userId },
       select: {
@@ -228,8 +230,9 @@ export class GrowthService {
    * Get AI-powered insights
    */
   async getInsights(userId: string): Promise<any> {
-    // TODO: Use Growth AI Agent for intelligent recommendations
+    // TODO: Integrate Growth AI Agent and scope insights to this specific user
     return {
+      userId,
       insights: [
         'Your 9:16 shorts perform 25% better than 1:1',
         'Best posting time: 7 PM EST',
@@ -244,6 +247,8 @@ export class GrowthService {
    */
   async schedulePost(postId: string, scheduledAt: Date): Promise<void> {
     // TODO: Update post with scheduled time and queue scheduled publish job
+    void postId;
+    void scheduledAt;
   }
 
   /**
@@ -251,6 +256,7 @@ export class GrowthService {
    */
   async cancelScheduledPost(postId: string): Promise<void> {
     // TODO: Update post status and cancel scheduled job
+    void postId;
   }
 
   /**
@@ -258,5 +264,6 @@ export class GrowthService {
    */
   async syncMetrics(userId: string): Promise<void> {
     // TODO: Queue social.metrics job to fetch latest data from all platforms
+    void userId;
   }
 }

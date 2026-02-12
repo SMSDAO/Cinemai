@@ -1,6 +1,5 @@
 import { BillingService } from './billing.service';
-import { PrismaService } from '../../prisma/prisma.service';
-import { SubscriptionType, PaymentType, PaymentStatus } from '@prisma/client';
+import { SubscriptionType } from '@prisma/client';
 
 // Mock Prisma
 const mockPrisma = {

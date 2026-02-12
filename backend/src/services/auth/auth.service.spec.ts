@@ -1,5 +1,4 @@
 import { AuthService } from './auth.service';
-import { PrismaService } from '../../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 

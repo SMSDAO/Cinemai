@@ -1,5 +1,4 @@
 import { ShortsService } from './shorts.service';
-import { PrismaService } from '../../prisma/prisma.service';
 import { ShortStatus, VideoFormat } from '@prisma/client';
 
 // Mock Prisma

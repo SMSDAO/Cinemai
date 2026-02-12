@@ -15,9 +15,7 @@ export class StripeClient {
   constructor() {
     this.apiKey = process.env.STRIPE_SECRET_KEY || '';
     if (this.apiKey && this.apiKey !== '') {
-      this.stripe = new Stripe(this.apiKey, {
-        apiVersion: '2026-01-28.clover',
-      });
+      this.stripe = new Stripe(this.apiKey);
     }
   }
 

@@ -197,7 +197,8 @@ export class AuthService {
     // Note: JWT tokens are stateless, so logout is typically handled client-side
     // by removing the token. For enhanced security, implement a token blacklist
     // or use refresh tokens with revocation.
-    // For now, this is a no-op
+    // userId parameter kept for future token blacklist implementation
+    void userId;
   }
 
   /**
@@ -232,7 +233,8 @@ export class AuthService {
   async oauthLogin(provider: string, accessToken: string): Promise<{ user: any; token: string }> {
     // TODO: Integrate with OAuth providers (Google, Apple)
     // This requires provider-specific SDKs and configuration
-    // For now, return a placeholder response
+    void provider;
+    void accessToken;
     throw new Error('OAuth integration not yet implemented');
   }
 

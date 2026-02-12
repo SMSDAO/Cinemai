@@ -1,5 +1,4 @@
 import { CinemaService } from './cinema.service';
-import { PrismaService } from '../../prisma/prisma.service';
 import { ProductionStatus } from '@prisma/client';
 
 // Mock Prisma

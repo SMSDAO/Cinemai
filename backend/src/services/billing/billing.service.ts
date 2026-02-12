@@ -35,7 +35,7 @@ export class BillingService {
 
     const paymentIntent = await this.stripeClient.createPaymentIntent(amountInCents, 'usd');
 
-    const payment = await this.prisma.payment.create({
+    await this.prisma.payment.create({
       data: {
         userId,
         amount,

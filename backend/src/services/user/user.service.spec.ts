@@ -1,5 +1,4 @@
 import { UserService } from './user.service';
-import { PrismaService } from '../../prisma/prisma.service';
 import { SubscriptionType, UserRole } from '@prisma/client';
 
 // Mock Prisma
