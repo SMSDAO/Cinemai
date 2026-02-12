@@ -16,6 +16,11 @@ export interface LoginData {
   password: string;
 }
 
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface AuthResponse {
   user: {
     id: string;
@@ -25,8 +30,7 @@ export interface AuthResponse {
     subscription_type: 'free' | 'pro';
     trips_remaining: number;
   };
-  access_token: string;
-  refresh_token: string;
+  token: string;
 }
 
 export const authService = {
@@ -35,8 +39,8 @@ export const authService = {
    */
   async signup(data: SignupData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/signup', data);
-    if (response.data.access_token) {
-      apiClient.setToken(response.data.access_token);
+    if (response.data.token) {
+      apiClient.setToken(response.data.token);
     }
     return response.data;
   },
@@ -46,8 +50,8 @@ export const authService = {
    */
   async login(data: LoginData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', data);
-    if (response.data.access_token) {
-      apiClient.setToken(response.data.access_token);
+    if (response.data.token) {
+      apiClient.setToken(response.data.token);
     }
     return response.data;
   },
@@ -62,13 +66,28 @@ export const authService = {
   /**
    * Refresh access token
    */
-  async refreshToken(refreshToken: string): Promise<AuthResponse> {
+  async refreshToken(token: string): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/refresh', {
-      refresh_token: refreshToken,
+      token,
     });
-    if (response.data.access_token) {
-      apiClient.setToken(response.data.access_token);
+    if (response.data.token) {
+      apiClient.setToken(response.data.token);
     }
     return response.data;
+  },
+
+  /**
+   * Get current user profile
+   */
+  async getMe(): Promise<any> {
+    const response = await api.get('/users/me');
+    return response.data;
+  },
+
+  /**
+   * Change password
+   */
+  async changePassword(data: ChangePasswordData): Promise<void> {
+    await api.post('/auth/change-password', data);
   },
 };
