@@ -20,12 +20,6 @@ import { AdminController } from './api/admin/admin.controller';
     SyncController,
     AdminController,
   ],
-  providers: [
-    UserService,
-    TimelineService,
-    DashboardService,
-    SyncService,
-    AdminService,
-  ],
+  providers: [UserService, TimelineService, DashboardService, SyncService, AdminService],
 })
 export class AppModule {}

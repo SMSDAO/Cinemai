@@ -191,8 +191,8 @@ export class DashboardService {
     let totalShares = 0;
     let totalComments = 0;
 
-    socialAccounts.forEach((account) => {
-      account.posts.forEach((post) => {
+    socialAccounts.forEach(account => {
+      account.posts.forEach(post => {
         if (post.metrics) {
           totalViews += post.metrics.views;
           totalLikes += post.metrics.likes;
@@ -208,7 +208,7 @@ export class DashboardService {
       totalLikes,
       totalShares,
       totalComments,
-      platforms: socialAccounts.map((a) => ({
+      platforms: socialAccounts.map(a => ({
         platform: a.platform,
         posts: a.posts.length,
       })),

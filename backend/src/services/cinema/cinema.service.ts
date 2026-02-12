@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ProductionStatus } from '@prisma/client';
+import { ProductionStatus, EventType } from '@prisma/client';
 
 /**
  * Cinema Service
@@ -33,6 +33,20 @@ export class CinemaService {
         photoUrl: data.photoUrl,
         style: data.style || 'cinematic',
         status: ProductionStatus.PENDING,
+      },
+    });
+
+    // Create timeline event for production creation
+    await this.prisma.timelineEvent.create({
+      data: {
+        userId,
+        eventType: EventType.PRODUCTION_CREATED,
+        contentId: production.id,
+        contentType: 'production',
+        metadata: {
+          title: production.title,
+          style: production.style,
+        },
       },
     });
 
@@ -138,10 +152,26 @@ export class CinemaService {
       updateData.outputUrl = outputUrl;
     }
 
-    await this.prisma.production.update({
+    const production = await this.prisma.production.update({
       where: { id: productionId },
       data: updateData,
     });
+
+    // Create timeline event when production is completed
+    if (status === ProductionStatus.COMPLETED) {
+      await this.prisma.timelineEvent.create({
+        data: {
+          userId: production.userId,
+          eventType: EventType.PRODUCTION_COMPLETED,
+          contentId: production.id,
+          contentType: 'production',
+          metadata: {
+            title: production.title,
+            outputUrl: production.outputUrl,
+          },
+        },
+      });
+    }
   }
 
   /**

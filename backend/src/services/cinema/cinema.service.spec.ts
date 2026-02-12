@@ -12,6 +12,9 @@ const mockPrisma = {
   asset: {
     findMany: jest.fn(),
   },
+  timelineEvent: {
+    create: jest.fn(),
+  },
 };
 
 describe('CinemaService', () => {

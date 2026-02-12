@@ -48,7 +48,10 @@ export class UserService {
   /**
    * Update user profile
    */
-  async updateProfile(userId: string, data: { name?: string; handle?: string; bio?: string; avatarUrl?: string }): Promise<any> {
+  async updateProfile(
+    userId: string,
+    data: { name?: string; handle?: string; bio?: string; avatarUrl?: string },
+  ): Promise<any> {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data,

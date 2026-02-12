@@ -86,14 +86,18 @@ export class TimelineService {
   /**
    * Get following timeline (activity from users you follow)
    */
-  async getFollowingTimeline(userId: string, limit: number = 20, offset: number = 0): Promise<any[]> {
+  async getFollowingTimeline(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0,
+  ): Promise<any[]> {
     // Get list of users being followed
     const following = await this.prisma.follow.findMany({
       where: { followerId: userId },
       select: { followingId: true },
     });
 
-    const followingIds = following.map((f) => f.followingId);
+    const followingIds = following.map(f => f.followingId);
 
     // Get events from followed users
     const events = await this.prisma.timelineEvent.findMany({

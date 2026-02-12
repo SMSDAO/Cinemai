@@ -8,6 +8,15 @@ const mockPrisma = {
     update: jest.fn(),
     delete: jest.fn(),
   },
+  production: {
+    count: jest.fn(),
+  },
+  short: {
+    count: jest.fn(),
+  },
+  follow: {
+    count: jest.fn(),
+  },
 };
 
 describe('UserService', () => {
@@ -44,10 +53,13 @@ describe('UserService', () => {
           id: true,
           email: true,
           name: true,
+          handle: true,
+          bio: true,
           avatarUrl: true,
           subscriptionType: true,
           tripsRemaining: true,
           role: true,
+          stats: true,
           createdAt: true,
         },
       });
@@ -78,6 +90,8 @@ describe('UserService', () => {
           id: true,
           email: true,
           name: true,
+          handle: true,
+          bio: true,
           avatarUrl: true,
           subscriptionType: true,
           tripsRemaining: true,
@@ -94,6 +108,31 @@ describe('UserService', () => {
       expect(mockPrisma.user.delete).toHaveBeenCalledWith({
         where: { id: 'user_id' },
       });
+    });
+  });
+
+  describe('getUserStats', () => {
+    it('should get user stats', async () => {
+      mockPrisma.production.count.mockResolvedValue(10);
+      mockPrisma.short.count.mockResolvedValue(20);
+      mockPrisma.follow.count.mockResolvedValueOnce(50).mockResolvedValueOnce(30);
+      mockPrisma.user.update.mockResolvedValue({
+        id: 'user_id',
+        stats: {
+          productions: 10,
+          shorts: 20,
+          followers: 50,
+          following: 30,
+        },
+      });
+
+      const result = await userService.getUserStats('user_id');
+
+      expect(result).toBeDefined();
+      expect(result.productions).toBe(10);
+      expect(result.shorts).toBe(20);
+      expect(result.followers).toBe(50);
+      expect(result.following).toBe(30);
     });
   });
 });

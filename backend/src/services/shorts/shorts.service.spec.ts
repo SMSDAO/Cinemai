@@ -13,6 +13,9 @@ const mockPrisma = {
     create: jest.fn(),
     findMany: jest.fn(),
   },
+  timelineEvent: {
+    create: jest.fn(),
+  },
 };
 
 describe('ShortsService', () => {

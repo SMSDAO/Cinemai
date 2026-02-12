@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ShortStatus, VideoFormat } from '@prisma/client';
+import { ShortStatus, VideoFormat, EventType } from '@prisma/client';
 
 /**
  * Shorts Service
@@ -37,6 +37,20 @@ export class ShortsService {
         idea: data.idea,
         format: formatMapping[data.format || '9:16'] || VideoFormat.PORTRAIT,
         status: ShortStatus.PENDING,
+      },
+    });
+
+    // Create timeline event for short creation
+    await this.prisma.timelineEvent.create({
+      data: {
+        userId,
+        eventType: EventType.SHORT_CREATED,
+        contentId: short.id,
+        contentType: 'short',
+        metadata: {
+          title: short.title,
+          format: short.format,
+        },
       },
     });
 
@@ -165,9 +179,25 @@ export class ShortsService {
       updateData.outputUrl = outputUrl;
     }
 
-    await this.prisma.short.update({
+    const short = await this.prisma.short.update({
       where: { id: shortId },
       data: updateData,
     });
+
+    // Create timeline event when short is completed
+    if (status === ShortStatus.COMPLETED) {
+      await this.prisma.timelineEvent.create({
+        data: {
+          userId: short.userId,
+          eventType: EventType.SHORT_COMPLETED,
+          contentId: short.id,
+          contentType: 'short',
+          metadata: {
+            title: short.title,
+            outputUrl: short.outputUrl,
+          },
+        },
+      });
+    }
   }
 }
