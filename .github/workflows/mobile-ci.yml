@@ -37,7 +37,7 @@ jobs:
 
       - name: Check TypeScript
         working-directory: mobile
-        run: npm run typecheck
+        run: npm run type-check
 
   test:
     name: Test

@@ -1,5 +1,5 @@
 // Prisma Schema for CinemAi Neo
-// This is a placeholder schema - expand as needed
+// Complete database schema with all 12 models
 
 generator client {
   provider = "prisma-client-js"
@@ -10,13 +10,318 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User models
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  USER
+  ADMIN
+  DEVELOPER
 }
 
-// Add more models as needed
+enum SubscriptionType {
+  FREE
+  PRO
+}
+
+enum ProductionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AssetType {
+  VIDEO
+  AUDIO
+  IMAGE
+  THUMBNAIL
+}
+
+enum VideoFormat {
+  PORTRAIT   // 9:16
+  SQUARE     // 1:1
+  LANDSCAPE  // 16:9
+}
+
+enum ShortStatus {
+  PENDING
+  GENERATING_HOOKS
+  GENERATING_VARIANTS
+  COMPLETED
+  FAILED
+}
+
+enum SocialPlatform {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+  X
+}
+
+enum PostStatus {
+  SCHEDULED
+  PUBLISHED
+  FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentType {
+  TRIP
+  SUBSCRIPTION
+}
+
+enum TripStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+enum SubscriptionPlan {
+  PRO
+}
+
+// ============================================================================
+// USER MODEL
+// ============================================================================
+
+model User {
+  id                String           @id @default(cuid())
+  email             String           @unique
+  name              String?
+  passwordHash      String
+  role              UserRole         @default(USER)
+  avatarUrl         String?
+  subscriptionType  SubscriptionType @default(FREE)
+  tripsRemaining    Int              @default(0)
+  isFirstLogin      Boolean          @default(true)
+  mustChangePassword Boolean         @default(false)
+  lastLoginAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  // Relations
+  productions      Production[]
+  shorts           Short[]
+  brandKits        BrandKit[]
+  socialAccounts   SocialAccount[]
+  trips            Trip[]
+  payments         Payment[]
+  subscriptions    Subscription[]
+}
+
+// ============================================================================
+// CINEMA MODELS
+// ============================================================================
+
+model Production {
+  id          String           @id @default(cuid())
+  userId      String
+  title       String
+  script      String           @db.Text
+  photoUrl    String
+  style       String?
+  status      ProductionStatus @default(PENDING)
+  outputUrl   String?
+  duration    Int?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets      Asset[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model Asset {
+  id            String    @id @default(cuid())
+  productionId  String
+  type          AssetType
+  url           String
+  duration      Int?
+  createdAt     DateTime  @default(now())
+  
+  production    Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  
+  @@index([productionId])
+}
+
+// ============================================================================
+// SHORTS MODELS
+// ============================================================================
+
+model Short {
+  id           String       @id @default(cuid())
+  userId       String
+  title        String
+  idea         String       @db.Text
+  format       VideoFormat  @default(PORTRAIT)
+  status       ShortStatus  @default(PENDING)
+  selectedHook String?      @db.Text
+  outputUrl    String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variants     ShortVariant[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model ShortVariant {
+  id            String   @id @default(cuid())
+  shortId       String
+  variantNumber Int
+  captionStyle  String   @default("default")
+  outputUrl     String?
+  createdAt     DateTime @default(now())
+  
+  short         Short    @relation(fields: [shortId], references: [id], onDelete: Cascade)
+  
+  @@unique([shortId, variantNumber])
+  @@index([shortId])
+}
+
+// ============================================================================
+// SOCIAL/GROWTH MODELS
+// ============================================================================
+
+model SocialAccount {
+  id           String       @id @default(cuid())
+  userId       String
+  platform     SocialPlatform
+  accountId    String
+  accessToken  String       @db.Text
+  refreshToken String?      @db.Text
+  expiresAt    DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts        SocialPost[]
+  
+  @@unique([userId, platform])
+  @@index([userId])
+}
+
+model SocialPost {
+  id              String        @id @default(cuid())
+  socialAccountId String
+  contentId       String
+  contentType     String
+  platform        SocialPlatform
+  postUrl         String?
+  status          PostStatus    @default(SCHEDULED)
+  scheduledFor    DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  
+  socialAccount   SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+  metrics         SocialMetrics?
+  
+  @@index([socialAccountId])
+  @@index([status])
+}
+
+model SocialMetrics {
+  id           String     @id @default(cuid())
+  postId       String     @unique
+  views        Int        @default(0)
+  likes        Int        @default(0)
+  shares       Int        @default(0)
+  comments     Int        @default(0)
+  engagement   Float      @default(0)
+  updatedAt    DateTime   @updatedAt
+  
+  post         SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================================
+// BRAND KIT MODEL
+// ============================================================================
+
+model BrandKit {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  logoUrl        String?
+  primaryColor   String   @default("#00F0FF")
+  secondaryColor String   @default("#FF2EF5")
+  fontFamily     String   @default("Inter")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// ============================================================================
+// BILLING MODELS
+// ============================================================================
+
+model Trip {
+  id               String     @id @default(cuid())
+  userId           String
+  amount           Decimal    @db.Decimal(10, 2)
+  quantity         Int
+  paymentIntentId  String     @unique
+  status           TripStatus @default(PENDING)
+  createdAt        DateTime   @default(now())
+  
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("usd")
+  type            PaymentType
+  stripePaymentId String        @unique
+  status          PaymentStatus @default(PENDING)
+  description     String?
+  createdAt       DateTime      @default(now())
+  
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  stripeSubscriptionId String             @unique
+  status               SubscriptionStatus @default(ACTIVE)
+  plan                 SubscriptionPlan   @default(PRO)
+  amount               Decimal            @db.Decimal(10, 2)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+}
