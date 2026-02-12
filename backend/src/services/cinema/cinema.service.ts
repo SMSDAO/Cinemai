@@ -105,7 +105,10 @@ export class CinemaService {
   /**
    * Update production
    */
-  async updateProduction(productionId: string, data: Partial<{ title: string; script: string; style: string }>): Promise<any> {
+  async updateProduction(
+    productionId: string,
+    data: Partial<{ title: string; script: string; style: string }>,
+  ): Promise<any> {
     const production = await this.prisma.production.update({
       where: { id: productionId },
       data,

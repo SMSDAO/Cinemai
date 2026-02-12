@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StripeClient } from '../../utils/stripe-client/stripe-client';
-import { PaymentStatus, PaymentType, TripStatus, SubscriptionStatus, SubscriptionPlan, SubscriptionType } from '@prisma/client';
+import {
+  PaymentStatus,
+  PaymentType,
+  TripStatus,
+  SubscriptionStatus,
+  SubscriptionPlan,
+  SubscriptionType,
+} from '@prisma/client';
 
 /**
  * Billing Service
@@ -35,7 +42,8 @@ export class BillingService {
         currency: 'usd',
         type: PaymentType.TRIP,
         stripePaymentId: paymentIntent.id,
-        status: paymentIntent.status === 'succeeded' ? PaymentStatus.SUCCEEDED : PaymentStatus.PENDING,
+        status:
+          paymentIntent.status === 'succeeded' ? PaymentStatus.SUCCEEDED : PaymentStatus.PENDING,
         description: `Purchase ${quantity} trip(s)`,
       },
     });
@@ -96,7 +104,10 @@ export class BillingService {
       data: {
         userId,
         stripeSubscriptionId: subscriptionData.id,
-        status: subscriptionData.status === 'active' ? SubscriptionStatus.ACTIVE : SubscriptionStatus.UNPAID,
+        status:
+          subscriptionData.status === 'active'
+            ? SubscriptionStatus.ACTIVE
+            : SubscriptionStatus.UNPAID,
         plan: SubscriptionPlan.PRO,
         amount,
         currentPeriodStart: subscriptionData.currentPeriodStart,

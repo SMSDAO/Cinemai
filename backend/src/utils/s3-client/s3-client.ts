@@ -27,7 +27,11 @@ export class S3Client {
     this.provider = (process.env.STORAGE_PROVIDER as 'aws' | 'r2' | 'mock') || 'mock';
 
     // Initialize S3 client if credentials are available
-    if (this.provider === 'aws' && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+    if (
+      this.provider === 'aws' &&
+      process.env.AWS_ACCESS_KEY_ID &&
+      process.env.AWS_SECRET_ACCESS_KEY
+    ) {
       this.client = new AWSS3Client({
         region: this.region,
         credentials: {
@@ -35,7 +39,12 @@ export class S3Client {
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         },
       });
-    } else if (this.provider === 'r2' && process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY) {
+    } else if (
+      this.provider === 'r2' &&
+      process.env.R2_ACCOUNT_ID &&
+      process.env.R2_ACCESS_KEY_ID &&
+      process.env.R2_SECRET_ACCESS_KEY
+    ) {
       // Cloudflare R2 uses S3-compatible API
       this.client = new AWSS3Client({
         region: 'auto',
@@ -146,7 +155,7 @@ export class S3Client {
     });
 
     const response = await this.client.send(command);
-    return (response.Contents || []).map((item) => item.Key || '').filter((key) => key !== '');
+    return (response.Contents || []).map(item => item.Key || '').filter(key => key !== '');
   }
 
   /**

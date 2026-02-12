@@ -124,7 +124,7 @@ export class GrowthService {
       },
     });
 
-    const shortIds = shorts.map((s) => s.id);
+    const shortIds = shorts.map(s => s.id);
 
     const postsWithMetrics = await this.prisma.socialPost.findMany({
       where: {
@@ -138,7 +138,10 @@ export class GrowthService {
 
     const totalViews = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.views || 0), 0);
     const totalLikes = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.likes || 0), 0);
-    const totalShares = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.shares || 0), 0);
+    const totalShares = postsWithMetrics.reduce(
+      (sum, post) => sum + (post.metrics?.shares || 0),
+      0,
+    );
     const avgEngagement =
       postsWithMetrics.length > 0
         ? postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.engagement || 0), 0) /
@@ -146,10 +149,10 @@ export class GrowthService {
         : 0;
 
     const topPerformers = postsWithMetrics
-      .filter((post) => post.metrics)
+      .filter(post => post.metrics)
       .sort((a, b) => (b.metrics?.views || 0) - (a.metrics?.views || 0))
       .slice(0, 5)
-      .map((post) => ({
+      .map(post => ({
         contentId: post.contentId,
         views: post.metrics?.views || 0,
         engagement: post.metrics?.engagement || 0,
@@ -178,7 +181,7 @@ export class GrowthService {
       },
     });
 
-    const productionIds = productions.map((p) => p.id);
+    const productionIds = productions.map(p => p.id);
 
     const postsWithMetrics = await this.prisma.socialPost.findMany({
       where: {
@@ -192,7 +195,10 @@ export class GrowthService {
 
     const totalViews = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.views || 0), 0);
     const totalLikes = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.likes || 0), 0);
-    const totalShares = postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.shares || 0), 0);
+    const totalShares = postsWithMetrics.reduce(
+      (sum, post) => sum + (post.metrics?.shares || 0),
+      0,
+    );
     const avgEngagement =
       postsWithMetrics.length > 0
         ? postsWithMetrics.reduce((sum, post) => sum + (post.metrics?.engagement || 0), 0) /
@@ -200,10 +206,10 @@ export class GrowthService {
         : 0;
 
     const topPerformers = postsWithMetrics
-      .filter((post) => post.metrics)
+      .filter(post => post.metrics)
       .sort((a, b) => (b.metrics?.views || 0) - (a.metrics?.views || 0))
       .slice(0, 5)
-      .map((post) => ({
+      .map(post => ({
         contentId: post.contentId,
         views: post.metrics?.views || 0,
         engagement: post.metrics?.engagement || 0,

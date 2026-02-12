@@ -168,7 +168,7 @@ export class StripeClient {
       limit,
     });
 
-    return paymentIntents.data.map((pi) => ({
+    return paymentIntents.data.map(pi => ({
       id: pi.id,
       amount: pi.amount,
       currency: pi.currency,
