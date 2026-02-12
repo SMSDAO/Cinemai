@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { StripeClient } from '../../utils/stripe-client/stripe-client';
+import { PaymentStatus, PaymentType, TripStatus, SubscriptionStatus, SubscriptionPlan, SubscriptionType } from '@prisma/client';
 
 /**
  * Billing Service
@@ -10,22 +13,62 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class BillingService {
+  private stripeClient: StripeClient;
+
+  constructor(private prisma: PrismaService) {
+    this.stripeClient = new StripeClient();
+  }
+
   /**
    * Purchase trips (pay-as-you-go)
    */
   async purchaseTrips(userId: string, quantity: number): Promise<any> {
-    // TODO: Integrate with Stripe
-    // 1. Create payment intent
-    // 2. Process payment
-    // 3. Add trips to user account
     const amount = quantity * 1.0; // $1 per trip
+    const amountInCents = Math.round(amount * 100);
+
+    const paymentIntent = await this.stripeClient.createPaymentIntent(amountInCents, 'usd');
+
+    const payment = await this.prisma.payment.create({
+      data: {
+        userId,
+        amount,
+        currency: 'usd',
+        type: PaymentType.TRIP,
+        stripePaymentId: paymentIntent.id,
+        status: paymentIntent.status === 'succeeded' ? PaymentStatus.SUCCEEDED : PaymentStatus.PENDING,
+        description: `Purchase ${quantity} trip(s)`,
+      },
+    });
+
+    const trip = await this.prisma.trip.create({
+      data: {
+        userId,
+        amount,
+        quantity,
+        paymentIntentId: paymentIntent.id,
+        status: paymentIntent.status === 'succeeded' ? TripStatus.COMPLETED : TripStatus.PENDING,
+      },
+    });
+
+    if (paymentIntent.status === 'succeeded') {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          tripsRemaining: {
+            increment: quantity,
+          },
+        },
+      });
+    }
+
     return {
-      id: 'trip_purchase_id',
+      id: trip.id,
       userId,
       quantity,
       amount,
-      status: 'completed',
-      paymentIntentId: 'pi_placeholder',
+      status: trip.status,
+      paymentIntentId: paymentIntent.id,
+      clientSecret: paymentIntent.clientSecret,
     };
   }
 
@@ -33,19 +76,58 @@ export class BillingService {
    * Create Pro subscription
    */
   async createSubscription(userId: string): Promise<any> {
-    // TODO: Integrate with Stripe
-    // 1. Create Stripe subscription
-    // 2. Update user subscription_type
-    // 3. Create subscription record
+    const amount = 49.0;
+    const priceId = process.env.STRIPE_PRO_PRICE_ID || 'price_pro';
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    let customerId = user.email;
+    const subscriptionData = await this.stripeClient.createSubscription(customerId, priceId);
+
+    const subscription = await this.prisma.subscription.create({
+      data: {
+        userId,
+        stripeSubscriptionId: subscriptionData.id,
+        status: subscriptionData.status === 'active' ? SubscriptionStatus.ACTIVE : SubscriptionStatus.UNPAID,
+        plan: SubscriptionPlan.PRO,
+        amount,
+        currentPeriodStart: subscriptionData.currentPeriodStart,
+        currentPeriodEnd: subscriptionData.currentPeriodEnd,
+      },
+    });
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { subscriptionType: SubscriptionType.PRO },
+    });
+
+    await this.prisma.payment.create({
+      data: {
+        userId,
+        amount,
+        currency: 'usd',
+        type: PaymentType.SUBSCRIPTION,
+        stripePaymentId: subscriptionData.id,
+        status: PaymentStatus.SUCCEEDED,
+        description: 'Pro subscription - Monthly',
+      },
+    });
+
     return {
-      id: 'subscription_id',
+      id: subscription.id,
       userId,
       plan: 'pro',
-      amount: 49.0,
-      status: 'active',
-      stripeSubscriptionId: 'sub_placeholder',
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      amount,
+      status: subscription.status,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
     };
   }
 
@@ -53,20 +135,49 @@ export class BillingService {
    * Cancel subscription
    */
   async cancelSubscription(subscriptionId: string): Promise<void> {
-    // TODO: Integrate with Stripe
-    // 1. Cancel Stripe subscription
-    // 2. Update subscription status
-    // 3. Update user subscription_type
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+    });
+
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
+
+    await this.stripeClient.cancelSubscription(subscription.stripeSubscriptionId);
+
+    await this.prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: {
+        status: SubscriptionStatus.CANCELED,
+        cancelAtPeriodEnd: true,
+      },
+    });
+
+    await this.prisma.user.update({
+      where: { id: subscription.userId },
+      data: { subscriptionType: SubscriptionType.FREE },
+    });
   }
 
   /**
    * Get payment history
    */
   async getPaymentHistory(userId: string, page: number = 1, limit: number = 20): Promise<any> {
-    // TODO: Integrate with Prisma
+    const skip = (page - 1) * limit;
+
+    const [payments, total] = await Promise.all([
+      this.prisma.payment.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.payment.count({ where: { userId } }),
+    ]);
+
     return {
-      payments: [],
-      total: 0,
+      payments,
+      total,
       page,
       limit,
     };
@@ -76,12 +187,25 @@ export class BillingService {
    * Get subscription details
    */
   async getSubscription(userId: string): Promise<any> {
-    // TODO: Integrate with Prisma
+    const subscription = await this.prisma.subscription.findFirst({
+      where: {
+        userId,
+        status: { in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.PAST_DUE] },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!subscription) {
+      return null;
+    }
+
     return {
-      id: 'subscription_id',
-      userId,
-      plan: 'pro',
-      status: 'active',
+      id: subscription.id,
+      userId: subscription.userId,
+      plan: subscription.plan,
+      status: subscription.status,
+      currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
     };
   }
 
@@ -89,7 +213,7 @@ export class BillingService {
    * Handle Stripe webhook
    */
   async handleWebhook(event: any): Promise<void> {
-    // TODO: Handle Stripe webhook events
+    // TODO: Handle Stripe webhook events with proper verification
     // - payment_intent.succeeded
     // - subscription.updated
     // - subscription.deleted
@@ -99,18 +223,48 @@ export class BillingService {
    * Get user's trip balance
    */
   async getTripBalance(userId: string): Promise<number> {
-    // TODO: Integrate with Prisma
-    return 0;
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { tripsRemaining: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.tripsRemaining;
   }
 
   /**
    * Consume a trip
    */
   async consumeTrip(userId: string): Promise<boolean> {
-    // TODO: Integrate with Prisma
-    // 1. Check if user has trips
-    // 2. Decrement trip count
-    // 3. Return success
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { tripsRemaining: true, subscriptionType: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.subscriptionType === SubscriptionType.PRO) {
+      return true;
+    }
+
+    if (user.tripsRemaining <= 0) {
+      return false;
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        tripsRemaining: {
+          decrement: 1,
+        },
+      },
+    });
+
     return true;
   }
 }

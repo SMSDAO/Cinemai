@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { S3Client } from '../../utils/s3-client/s3-client';
 
 /**
  * User Service
@@ -9,49 +11,80 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class UserService {
+  private s3Client: S3Client;
+
+  constructor(private prisma: PrismaService) {
+    this.s3Client = new S3Client();
+  }
+
   /**
    * Get user profile by ID
    */
   async getProfile(userId: string): Promise<any> {
-    // TODO: Integrate with Prisma
-    return {
-      id: userId,
-      email: 'user@example.com',
-      name: 'User Name',
-      avatarUrl: null,
-      subscriptionType: 'free',
-      tripsRemaining: 0,
-    };
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatarUrl: true,
+        subscriptionType: true,
+        tripsRemaining: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   /**
    * Update user profile
    */
   async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }): Promise<any> {
-    // TODO: Integrate with Prisma
-    return {
-      id: userId,
-      ...data,
-    };
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatarUrl: true,
+        subscriptionType: true,
+        tripsRemaining: true,
+      },
+    });
+
+    return user;
   }
 
   /**
    * Delete user account
    */
   async deleteAccount(userId: string): Promise<void> {
-    // TODO: Integrate with Prisma
-    // 1. Delete all user data
-    // 2. Cancel subscriptions
-    // 3. Delete user record
+    await this.prisma.user.delete({
+      where: { id: userId },
+    });
   }
 
   /**
    * Get user preferences
    */
-  async getPreferences(userId: string): Promise<any> {
-    // TODO: Integrate with Prisma
+  async getUserPreferences(userId: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     return {
-      userId,
+      userId: user.id,
       theme: 'dark',
       notifications: true,
     };
@@ -60,10 +93,17 @@ export class UserService {
   /**
    * Update user preferences
    */
-  async updatePreferences(userId: string, preferences: any): Promise<any> {
-    // TODO: Integrate with Prisma
+  async updateUserPreferences(userId: string, preferences: any): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     return {
-      userId,
+      userId: user.id,
       ...preferences,
     };
   }
@@ -72,7 +112,13 @@ export class UserService {
    * Upload user avatar
    */
   async uploadAvatar(userId: string, file: Buffer): Promise<string> {
-    // TODO: Upload to S3 and update user
-    return 'https://s3.example.com/avatar.jpg';
+    const avatarUrl = await this.s3Client.uploadAvatar(userId, file, 'image/jpeg');
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+    });
+
+    return avatarUrl;
   }
 }

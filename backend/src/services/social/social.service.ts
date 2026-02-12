@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { SocialPlatform } from '@prisma/client';
 
 /**
  * Social Service
@@ -9,6 +11,8 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class SocialService {
+  constructor(private prisma: PrismaService) {}
+
   /**
    * Connect a social account
    */
@@ -21,15 +25,29 @@ export class SocialService {
       accountName: string;
     },
   ): Promise<any> {
-    // TODO: Integrate with Prisma
-    // 1. Encrypt tokens
-    // 2. Store account credentials
+    const platformMapping: Record<string, SocialPlatform> = {
+      tiktok: SocialPlatform.TIKTOK,
+      instagram: SocialPlatform.INSTAGRAM,
+      youtube: SocialPlatform.YOUTUBE,
+      x: SocialPlatform.X,
+    };
+
+    const socialAccount = await this.prisma.socialAccount.create({
+      data: {
+        userId,
+        platform: platformMapping[data.platform],
+        accountId: data.accountName,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      },
+    });
+
     return {
-      id: 'social_account_id',
+      id: socialAccount.id,
       userId,
       platform: data.platform,
       accountName: data.accountName,
-      connectedAt: new Date(),
+      connectedAt: socialAccount.createdAt,
     };
   }
 
@@ -37,36 +55,56 @@ export class SocialService {
    * Disconnect a social account
    */
   async disconnectAccount(accountId: string): Promise<void> {
-    // TODO: Integrate with Prisma
-    // 1. Revoke tokens if possible
-    // 2. Delete account record
+    await this.prisma.socialAccount.delete({
+      where: { id: accountId },
+    });
+    // TODO: Revoke tokens if possible via platform APIs
   }
 
   /**
    * List user's connected accounts
    */
   async listAccounts(userId: string): Promise<any[]> {
-    // TODO: Integrate with Prisma
-    return [];
+    const accounts = await this.prisma.socialAccount.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        platform: true,
+        accountId: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return accounts;
   }
 
   /**
    * Get account by ID
    */
   async getAccount(accountId: string): Promise<any> {
-    // TODO: Integrate with Prisma
-    return {
-      id: accountId,
-      platform: 'tiktok',
-      accountName: '@username',
-    };
+    const account = await this.prisma.socialAccount.findUnique({
+      where: { id: accountId },
+      select: {
+        id: true,
+        platform: true,
+        accountId: true,
+        createdAt: true,
+      },
+    });
+
+    if (!account) {
+      throw new Error('Account not found');
+    }
+
+    return account;
   }
 
   /**
    * Refresh access token
    */
   async refreshToken(accountId: string): Promise<void> {
-    // TODO: Use platform-specific OAuth refresh
+    // TODO: Use platform-specific OAuth refresh flow
   }
 
   /**
@@ -96,7 +134,7 @@ export class SocialService {
     refreshToken?: string;
     accountName: string;
   }> {
-    // TODO: Exchange code for tokens
+    // TODO: Exchange code for tokens via platform OAuth APIs
     return {
       accessToken: 'access_token_placeholder',
       refreshToken: 'refresh_token_placeholder',
