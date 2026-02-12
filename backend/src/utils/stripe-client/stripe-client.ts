@@ -16,7 +16,7 @@ export class StripeClient {
     this.apiKey = process.env.STRIPE_SECRET_KEY || '';
     if (this.apiKey && this.apiKey !== '') {
       this.stripe = new Stripe(this.apiKey, {
-        apiVersion: '2024-12-18.acacia',
+        apiVersion: '2026-01-28.clover',
       });
     }
   }
@@ -89,8 +89,8 @@ export class StripeClient {
       customerId: subscription.customer as string,
       priceId,
       status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
     };
   }
 
@@ -146,8 +146,8 @@ export class StripeClient {
 
     return {
       id: customer.id,
-      email: customer.email,
-      name: customer.name,
+      email: (customer as any).email || undefined,
+      name: (customer as any).name || undefined,
     };
   }
 
@@ -209,8 +209,8 @@ export class StripeClient {
     return {
       id: subscription.id,
       status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
     };
   }
