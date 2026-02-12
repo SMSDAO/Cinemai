@@ -158,7 +158,9 @@ export class ShortsService {
    * Update short status
    */
   async updateStatus(shortId: string, status: string, outputUrl?: string): Promise<void> {
-    const updateData: any = { status: status as ShortStatus };
+    const updateData: { status: ShortStatus; outputUrl?: string } = {
+      status: status as ShortStatus,
+    };
     if (outputUrl) {
       updateData.outputUrl = outputUrl;
     }

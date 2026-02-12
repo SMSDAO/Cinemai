@@ -128,7 +128,9 @@ export class CinemaService {
    * Update production status
    */
   async updateStatus(productionId: string, status: string, outputUrl?: string): Promise<void> {
-    const updateData: any = { status: status as ProductionStatus };
+    const updateData: { status: ProductionStatus; outputUrl?: string } = {
+      status: status as ProductionStatus,
+    };
     if (outputUrl) {
       updateData.outputUrl = outputUrl;
     }

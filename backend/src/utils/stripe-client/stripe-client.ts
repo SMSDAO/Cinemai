@@ -84,6 +84,8 @@ export class StripeClient {
       items: [{ price: priceId }],
     });
 
+    // Note: Using 'as any' due to Stripe SDK type definitions not exposing period fields
+    // These properties exist at runtime but are not in the Response<Subscription> type
     return {
       id: subscription.id,
       customerId: subscription.customer as string,
@@ -144,6 +146,8 @@ export class StripeClient {
       throw new Error('Customer has been deleted');
     }
 
+    // Note: Using 'as any' due to Stripe SDK DeletedCustomer union type narrowing issue
+    // After deleted check, customer should be Customer but TypeScript doesn't narrow properly
     return {
       id: customer.id,
       email: (customer as any).email || undefined,
@@ -206,6 +210,7 @@ export class StripeClient {
     }
 
     const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+    // Note: Using 'as any' due to Stripe SDK type definitions not exposing period fields
     return {
       id: subscription.id,
       status: subscription.status,
