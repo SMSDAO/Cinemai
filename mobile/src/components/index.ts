@@ -26,3 +26,6 @@ export type { SkeletonProps } from './Skeleton/Skeleton';
 
 export { Tabs } from './Tabs/Tabs';
 export type { TabsProps, Tab } from './Tabs/Tabs';
+
+export { TimelineEvent } from './TimelineEvent/TimelineEvent';
+export type { TimelineEvent as TimelineEventType } from '../services/timeline.service';
