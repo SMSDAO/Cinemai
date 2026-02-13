@@ -62,7 +62,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        role: user.role.toLowerCase(),
         isFirstLogin: user.isFirstLogin,
         mustChangePassword: user.mustChangePassword,
       },
@@ -110,7 +110,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        role: user.role.toLowerCase(),
         isFirstLogin: user.isFirstLogin,
       },
       token,
@@ -222,7 +222,7 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: user.role.toLowerCase(),
       name: user.name,
     };
   }
