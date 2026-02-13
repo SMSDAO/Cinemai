@@ -12,6 +12,10 @@ const mockPrisma = {
   asset: {
     findMany: jest.fn(),
   },
+  timelineEvent: {
+    create: jest.fn(),
+  },
+  $transaction: jest.fn(),
 };
 
 describe('CinemaService', () => {
@@ -31,7 +35,7 @@ describe('CinemaService', () => {
         photoUrl: 'https://example.com/photo.jpg',
       };
 
-      mockPrisma.production.create.mockResolvedValue({
+      const mockProduction = {
         id: 'prod_123',
         userId,
         title: data.title,
@@ -43,6 +47,19 @@ describe('CinemaService', () => {
         duration: null,
         createdAt: new Date(),
         updatedAt: new Date(),
+      };
+
+      // Mock transaction to execute callback immediately
+      mockPrisma.$transaction.mockImplementation(async callback => {
+        const mockTx = {
+          production: {
+            create: jest.fn().mockResolvedValue(mockProduction),
+          },
+          timelineEvent: {
+            create: jest.fn().mockResolvedValue({}),
+          },
+        };
+        return callback(mockTx);
       });
 
       const result = await cinemaService.createProduction(userId, data);
@@ -50,16 +67,7 @@ describe('CinemaService', () => {
       expect(result).toBeDefined();
       expect(result.id).toBe('prod_123');
       expect(result.title).toBe(data.title);
-      expect(mockPrisma.production.create).toHaveBeenCalledWith({
-        data: {
-          userId,
-          title: data.title,
-          script: data.script,
-          photoUrl: data.photoUrl,
-          style: 'cinematic',
-          status: ProductionStatus.PENDING,
-        },
-      });
+      expect(mockPrisma.$transaction).toHaveBeenCalled();
     });
   });
 

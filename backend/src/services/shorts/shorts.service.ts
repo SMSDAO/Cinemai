@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ShortStatus, VideoFormat } from '@prisma/client';
+import { ShortStatus, VideoFormat, EventType } from '@prisma/client';
 
 /**
  * Shorts Service
@@ -30,17 +30,33 @@ export class ShortsService {
       '16:9': VideoFormat.LANDSCAPE,
     };
 
-    const short = await this.prisma.short.create({
-      data: {
-        userId,
-        title: data.title,
-        idea: data.idea,
-        format: formatMapping[data.format || '9:16'] || VideoFormat.PORTRAIT,
-        status: ShortStatus.PENDING,
-      },
-    });
+    // Use transaction to ensure short and timeline event are created atomically
+    return await this.prisma.$transaction(async tx => {
+      const short = await tx.short.create({
+        data: {
+          userId,
+          title: data.title,
+          idea: data.idea,
+          format: formatMapping[data.format || '9:16'] || VideoFormat.PORTRAIT,
+          status: ShortStatus.PENDING,
+        },
+      });
 
-    return short;
+      await tx.timelineEvent.create({
+        data: {
+          userId,
+          eventType: EventType.SHORT_CREATED,
+          contentId: short.id,
+          contentType: 'short',
+          metadata: {
+            title: short.title,
+            format: short.format,
+          },
+        },
+      });
+
+      return short;
+    });
   }
 
   /**
@@ -165,9 +181,32 @@ export class ShortsService {
       updateData.outputUrl = outputUrl;
     }
 
-    await this.prisma.short.update({
-      where: { id: shortId },
-      data: updateData,
-    });
+    // Use transaction to ensure status update and timeline event are atomic
+    if (status === ShortStatus.COMPLETED) {
+      await this.prisma.$transaction(async tx => {
+        const short = await tx.short.update({
+          where: { id: shortId },
+          data: updateData,
+        });
+
+        await tx.timelineEvent.create({
+          data: {
+            userId: short.userId,
+            eventType: EventType.SHORT_COMPLETED,
+            contentId: short.id,
+            contentType: 'short',
+            metadata: {
+              title: short.title,
+              outputUrl: short.outputUrl,
+            },
+          },
+        });
+      });
+    } else {
+      await this.prisma.short.update({
+        where: { id: shortId },
+        data: updateData,
+      });
+    }
   }
 }

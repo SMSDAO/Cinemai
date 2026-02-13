@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Editor
+.DS_Store
+*.swp
+*.swo
+.vscode
+.idea
+
+# Build
+build
+.cache

@@ -27,10 +27,13 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        handle: true,
+        bio: true,
         avatarUrl: true,
         subscriptionType: true,
         tripsRemaining: true,
         role: true,
+        stats: true,
         createdAt: true,
       },
     });
@@ -45,7 +48,10 @@ export class UserService {
   /**
    * Update user profile
    */
-  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }): Promise<any> {
+  async updateProfile(
+    userId: string,
+    data: { name?: string; handle?: string; bio?: string; avatarUrl?: string },
+  ): Promise<any> {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data,
@@ -53,6 +59,8 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        handle: true,
+        bio: true,
         avatarUrl: true,
         subscriptionType: true,
         tripsRemaining: true,
@@ -120,5 +128,32 @@ export class UserService {
     });
 
     return avatarUrl;
+  }
+
+  /**
+   * Get user stats
+   */
+  async getUserStats(userId: string): Promise<any> {
+    const [productionCount, shortCount, followersCount, followingCount] = await Promise.all([
+      this.prisma.production.count({ where: { userId } }),
+      this.prisma.short.count({ where: { userId } }),
+      this.prisma.follow.count({ where: { followingId: userId } }),
+      this.prisma.follow.count({ where: { followerId: userId } }),
+    ]);
+
+    const stats = {
+      productions: productionCount,
+      shorts: shortCount,
+      followers: followersCount,
+      following: followingCount,
+    };
+
+    // Update user stats in database
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { stats },
+    });
+
+    return stats;
   }
 }

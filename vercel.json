@@ -1,15 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "cd web && npm install && npm run build",
+  "outputDirectory": "web/dist",
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [

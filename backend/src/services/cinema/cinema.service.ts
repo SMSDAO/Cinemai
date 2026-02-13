@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ProductionStatus } from '@prisma/client';
+import { ProductionStatus, EventType } from '@prisma/client';
 
 /**
  * Cinema Service
@@ -25,18 +25,34 @@ export class CinemaService {
       style?: string;
     },
   ): Promise<any> {
-    const production = await this.prisma.production.create({
-      data: {
-        userId,
-        title: data.title,
-        script: data.script,
-        photoUrl: data.photoUrl,
-        style: data.style || 'cinematic',
-        status: ProductionStatus.PENDING,
-      },
-    });
+    // Use transaction to ensure production and timeline event are created atomically
+    return await this.prisma.$transaction(async tx => {
+      const production = await tx.production.create({
+        data: {
+          userId,
+          title: data.title,
+          script: data.script,
+          photoUrl: data.photoUrl,
+          style: data.style || 'cinematic',
+          status: ProductionStatus.PENDING,
+        },
+      });
 
-    return production;
+      await tx.timelineEvent.create({
+        data: {
+          userId,
+          eventType: EventType.PRODUCTION_CREATED,
+          contentId: production.id,
+          contentType: 'production',
+          metadata: {
+            title: production.title,
+            style: production.style,
+          },
+        },
+      });
+
+      return production;
+    });
   }
 
   /**
@@ -138,10 +154,33 @@ export class CinemaService {
       updateData.outputUrl = outputUrl;
     }
 
-    await this.prisma.production.update({
-      where: { id: productionId },
-      data: updateData,
-    });
+    // Use transaction to ensure status update and timeline event are atomic
+    if (status === ProductionStatus.COMPLETED) {
+      await this.prisma.$transaction(async tx => {
+        const production = await tx.production.update({
+          where: { id: productionId },
+          data: updateData,
+        });
+
+        await tx.timelineEvent.create({
+          data: {
+            userId: production.userId,
+            eventType: EventType.PRODUCTION_COMPLETED,
+            contentId: production.id,
+            contentType: 'production',
+            metadata: {
+              title: production.title,
+              outputUrl: production.outputUrl,
+            },
+          },
+        });
+      });
+    } else {
+      await this.prisma.production.update({
+        where: { id: productionId },
+        data: updateData,
+      });
+    }
   }
 
   /**

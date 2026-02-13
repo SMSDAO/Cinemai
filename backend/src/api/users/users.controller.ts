@@ -29,9 +29,22 @@ export class UsersController {
    * PUT /users/me
    */
   @Put('me')
-  async updateProfile(@Req() req: any, @Body() body: { name?: string; avatarUrl?: string }) {
+  async updateProfile(
+    @Req() req: any,
+    @Body() body: { name?: string; handle?: string; bio?: string; avatarUrl?: string },
+  ) {
     const userId = req.user?.id;
     return this.userService.updateProfile(userId, body);
+  }
+
+  /**
+   * Get user stats
+   * GET /users/me/stats
+   */
+  @Get('me/stats')
+  async getUserStats(@Req() req: any) {
+    const userId = req.user?.id;
+    return this.userService.getUserStats(userId);
   }
 
   /**
