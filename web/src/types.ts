@@ -59,3 +59,37 @@ export interface Short {
   outputUrl?: string;
   createdAt: string;
 }
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  name: string;
+  handle?: string;
+  role: 'USER' | 'ADMIN';
+  onboarded: boolean;
+  createdAt: string;
+  _count?: {
+    productions: number;
+    shorts: number;
+  };
+}
+
+export interface AdminContentItem {
+  id: string;
+  userId: string;
+  title: string;
+  type: 'PRODUCTION' | 'SHORT';
+  status: string;
+  createdAt: string;
+  user?: {
+    name: string;
+    handle?: string;
+  };
+}
+
+export interface SystemStats {
+  users: number;
+  productions: number;
+  shorts: number;
+  timelineEvents: number;
+}

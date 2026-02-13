@@ -6,6 +6,7 @@ interface AuthContextValue {
   user: User | null;
   token: string | null;
   loading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -49,7 +50,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, isAdmin: user?.role === 'ADMIN', login, logout }}>
       {children}
     </AuthContext.Provider>
   );

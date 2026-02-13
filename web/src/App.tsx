@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { Landing } from './pages/Landing';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { Dashboard } from './pages/Dashboard';
 import { Timeline } from './pages/Timeline';
 import { Profile } from './pages/Profile';
 import { Create } from './pages/Create';
+import { Admin } from './pages/Admin';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -23,7 +25,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const location = useLocation();
 
   if (!user) {
@@ -49,6 +51,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Link to="/profile" className={isActive('/profile') ? 'active' : ''}>
             Profile
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className={isActive('/admin') ? 'active' : ''}>
+              Admin
+            </Link>
+          )}
           <button
             onClick={logout}
             style={{
@@ -73,6 +80,7 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <Layout>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route
@@ -107,7 +115,14 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Layout>
     </BrowserRouter>

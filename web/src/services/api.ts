@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, Stats, TimelineEvent, Production, Short } from '../types';
+import type { User, Stats, TimelineEvent, Production, Short, AdminUser, AdminContentItem, SystemStats } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
@@ -71,5 +71,39 @@ export const login = async (email: string, password: string): Promise<{ token: s
 
 export const signup = async (email: string, password: string): Promise<{ message: string }> => {
   const { data } = await api.post('/auth/signup', { email, password });
+  return data;
+};
+
+// Admin endpoints
+interface AdminUsersParams {
+  page?: number;
+  limit?: number;
+}
+
+export const getAdminUsers = async (params: AdminUsersParams = {}): Promise<AdminUser[]> => {
+  const { data } = await api.get('/admin/users', { params });
+  return data;
+};
+
+export const getAdminContent = async (params: { limit?: number } = {}): Promise<AdminContentItem[]> => {
+  const productions = await api.get('/cinema/productions', { params: { limit: params.limit || 20 } });
+  const shorts = await api.get('/shorts', { params: { limit: params.limit || 20 } });
+  
+  const content: AdminContentItem[] = [
+    ...productions.data.map((p: Production) => ({
+      ...p,
+      type: 'PRODUCTION' as const,
+    })),
+    ...shorts.data.map((s: Short) => ({
+      ...s,
+      type: 'SHORT' as const,
+    })),
+  ];
+  
+  return content.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+};
+
+export const getAdminSystemStats = async (): Promise<SystemStats> => {
+  const { data } = await api.get('/admin/dashboard');
   return data;
 };

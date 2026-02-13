@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getUserTimeline, getFollowingTimeline, getGlobalTimeline } from '../services/api';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { Tabs } from '../components/Tabs';
 import type { TimelineEvent } from '../types';
 
 type TabType = 'user' | 'following' | 'global';
@@ -71,29 +72,18 @@ export const Timeline: React.FC = () => {
   };
 
   return (
-    <div className="page">
-      <h1 className="page-title">Timeline</h1>
+    <div className="container">
+      <h1>Timeline</h1>
 
-      <div className="tabs">
-        <button
-          className={`tab ${activeTab === 'user' ? 'active' : ''}`}
-          onClick={() => setActiveTab('user')}
-        >
-          You
-        </button>
-        <button
-          className={`tab ${activeTab === 'following' ? 'active' : ''}`}
-          onClick={() => setActiveTab('following')}
-        >
-          Following
-        </button>
-        <button
-          className={`tab ${activeTab === 'global' ? 'active' : ''}`}
-          onClick={() => setActiveTab('global')}
-        >
-          Global
-        </button>
-      </div>
+      <Tabs 
+        tabs={[
+          { id: 'user', label: 'You' },
+          { id: 'following', label: 'Following' },
+          { id: 'global', label: 'Global' },
+        ]}
+        activeTab={activeTab}
+        onChange={(id) => setActiveTab(id as TabType)}
+      />
 
       <div className="list">
         {events.length > 0 ? (
