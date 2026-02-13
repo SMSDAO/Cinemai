@@ -1,65 +1,114 @@
-# Vercel Deployment Guide
+# CinemAi Deployment Guide
 
 ## Overview
 
-This repository is configured for Vercel deployment. The current configuration deploys a static landing page at the root URL.
+This repository contains three deployable components:
+1. **Web App** (React + Vite) → Deploys to Vercel
+2. **Backend API** (NestJS) → Deploys to Railway/Render/Fly.io
+3. **Mobile App** (React Native + Expo) → Deploys to app stores
 
-## What's Deployed
+---
 
-- **Landing Page**: The `public/index.html` file is served at the root URL (`/`)
-- **Static Assets**: All files in the `public/` directory are served as static assets
+## 🌐 Web App Deployment (Vercel)
 
-## Deployment Steps
+### Quick Start
 
-### 1. Connect to Vercel
+The CinemAi Neo web app is configured for automatic deployment to Vercel.
 
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click "Add New Project"
-3. Import this GitHub repository
-4. Vercel will automatically detect the configuration from `vercel.json`
+**📖 Complete Guide:** See [`VERCEL_DEPLOYMENT_GUIDE.md`](./VERCEL_DEPLOYMENT_GUIDE.md) for detailed instructions.
 
-### 2. Configure Environment Variables
+### Essential Information
 
-If deploying the backend API, set the following environment variables in Vercel:
+**What's Deployed:**
+- Full React web application (8 routes)
+- Login, Signup, Dashboard, Timeline, Profile, Create, Admin pages
+- Neo Glow UI with dark theme
+- Responsive mobile-first design
 
-- `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string
-- `JWT_SECRET`: Secret key for JWT tokens
-- `NODE_ENV`: Set to `production`
+**Requirements:**
+- Vercel account connected to GitHub
+- Backend API running and accessible
+- Environment variable `VITE_API_URL` configured
 
-### 3. Deploy
+**Quick Setup:**
 
-- Push to the `main` branch to trigger automatic deployment
-- Or manually deploy from the Vercel dashboard
+1. **Connect to Vercel**
+   - Import repository from GitHub
+   - Vercel auto-detects configuration
 
-## Current Configuration
+2. **Set Environment Variables**
+   - Production: `VITE_API_URL=https://cinemai-bice.vercel.app/api`
+   - Preview: `VITE_API_URL=https://cinemai-bice.vercel.app/api`
+   - Development: `VITE_API_URL=http://localhost:3000`
 
-The `vercel.json` file is configured to:
-- Build and serve static files from the `public/` directory using `@vercel/static`
-- Rewrite all requests to `/public/index.html` (SPA behavior)
-- Set security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
+3. **Deploy**
+   - Push to `main` branch for production
+   - Create PR for preview deployments
 
-## Backend API Deployment
+### Current Configuration
 
-**Note**: The backend NestJS API is not currently configured for Vercel deployment because:
+**File:** `vercel.json`
+
+- **Build Command:** `cd web && npm install && npm run build`
+- **Output Directory:** `web/dist`
+- **Framework:** Vite
+- **SPA Rewrites:** All routes → `/index.html`
+- **Security Headers:** X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+
+---
+
+## 🔧 Backend API Deployment
+
+### Recommended Platforms
+
+The backend NestJS API is **NOT** deployed to Vercel because:
 - NestJS requires a long-running server process
-- Vercel serverless functions have time limits (10s for Hobby, 60s for Pro)
-- Database connections need careful management in serverless
+- Vercel serverless functions have time limits (10s Hobby, 60s Pro)
+- Database connections need persistent management
 
-### Recommended Backend Deployment Options
+**Best Options:**
 
-1. **Railway**: Best for NestJS with PostgreSQL
-2. **Render**: Good for containerized deployments
-3. **AWS ECS/EKS**: For production-grade deployments
-4. **DigitalOcean App Platform**: Simple and cost-effective
+1. **Railway** ⭐ Recommended
+   - Easy NestJS deployment
+   - Built-in PostgreSQL
+   - Automatic HTTPS
+   - Simple environment variables
 
-### Alternative: Vercel + Serverless Backend
+2. **Render**
+   - Docker support
+   - Free tier available
+   - Good for PostgreSQL
 
-To deploy the backend on Vercel, you would need to:
-1. Convert to serverless functions in `api/` directory
-2. Use connection pooling for database (e.g., Prisma with connection limits)
-3. Implement proper cleanup in serverless context
-4. Update the `vercel.json` configuration
+3. **Fly.io**
+   - Global deployment
+   - Containerized apps
+   - PostgreSQL support
+
+4. **Railway/Render/DigitalOcean**
+   - Cost-effective
+   - Simple setup
+
+### Backend Requirements
+
+**Environment Variables:**
+```bash
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-secret-key
+PORT=3000
+NODE_ENV=production
+```
+
+**CORS Configuration:**
+
+Backend must allow these origins (already configured):
+- `https://cinemai-bice.vercel.app` (production)
+- `https://*.vercel.app` (preview deployments)
+- `http://localhost:3001` (development)
+- `http://localhost:5173` (Vite dev)
+
+**File:** `backend/src/main.ts` (lines 7-16)
+
+**📖 Backend Setup:** See [`BACKEND_PRODUCTION_FIXES.md`](./BACKEND_PRODUCTION_FIXES.md) for complete guide.
 
 ## CI/CD Pipeline
 
