@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { signup } from '../services/api';
 
-export const Login: React.FC = () => {
+export const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      await signup(email, password);
+      navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.message || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -32,7 +45,7 @@ export const Login: React.FC = () => {
     <div className="login-container">
       <Card>
         <h1 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center', color: '#00F0FF' }}>
-          CinemAi Neo
+          Create Account
         </h1>
         {error && <div className="error">{error}</div>}
         <form onSubmit={handleSubmit} className="login-form">
@@ -50,14 +63,21 @@ export const Login: React.FC = () => {
             onChange={setPassword}
             placeholder="••••••••"
           />
+          <Input
+            label="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="••••••••"
+          />
           <Button type="submit" loading={loading}>
-            Login
+            Sign Up
           </Button>
         </form>
         <div style={{ marginTop: '1rem', textAlign: 'center', color: '#E5E5E5' }}>
-          Don't have an account?{' '}
-          <Link to="/signup" style={{ color: '#00F0FF', textDecoration: 'none' }}>
-            Sign Up
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: '#00F0FF', textDecoration: 'none' }}>
+            Login
           </Link>
         </div>
       </Card>

@@ -68,3 +68,8 @@ export const login = async (email: string, password: string): Promise<{ token: s
   const { data } = await api.post('/auth/login', { email, password });
   return data;
 };
+
+export const signup = async (email: string, password: string): Promise<{ message: string }> => {
+  const { data } = await api.post('/auth/signup', { email, password });
+  return data;
+};
