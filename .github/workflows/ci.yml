@@ -1,91 +1,38 @@
-name: CI
+name: CinemAi CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
-    branches: [main, develop]
-
-permissions:
-  contents: read
+    branches: [ "main" ]
 
 jobs:
-  backend:
-    name: Backend CI
+  build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
-        working-directory: backend
-        run: npm ci
+        run: pnpm install
+        working-directory: app-nextjs
 
-      - name: Run linting
-        working-directory: backend
-        run: npm run lint
-
-      - name: Check formatting
-        working-directory: backend
-        run: npm run format:check
-
-      - name: Type check
-        working-directory: backend
-        run: npm run type-check
-
-      - name: Run tests
-        working-directory: backend
-        run: npm run test:cov
+      - name: Lint
+        run: pnpm lint
+        working-directory: app-nextjs
 
       - name: Build
-        working-directory: backend
-        run: npm run build
+        run: pnpm build
+        working-directory: app-nextjs
 
-  mobile:
-    name: Mobile CI
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: mobile/package-lock.json
-
-      - name: Install dependencies
-        working-directory: mobile
-        run: npm ci --legacy-peer-deps
-
-      - name: Run linting
-        working-directory: mobile
-        run: npm run lint
-
-      - name: Check formatting
-        working-directory: mobile
-        run: npm run format:check
-
-      - name: Type check
-        working-directory: mobile
-        run: npm run type-check
-
-      - name: Run tests
-        working-directory: mobile
-        run: npm run test
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        working-directory: app-nextjs
