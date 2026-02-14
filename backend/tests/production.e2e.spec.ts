@@ -10,12 +10,15 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
-describe('Backend Production Tests (e2e)', () => {
+// Skip e2e tests if DATABASE_URL is not set (e.g., running locally without a test database)
+const describeIfDatabase = process.env.DATABASE_URL ? describe : describe.skip;
+
+describeIfDatabase('Backend Production Tests (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let adminToken: string;

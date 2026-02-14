@@ -41,7 +41,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    showToast(\`\${provider} login coming soon!\`, 'info');
+    showToast(`${provider} login coming soon!`, 'info');
   };
 
   return (

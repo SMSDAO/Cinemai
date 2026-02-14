@@ -99,6 +99,13 @@ See the [`docs/`](./docs/) directory for detailed documentation on:
 
 ## 🛠️ Development
 
+### Prerequisites
+
+- **Node.js 24.x or higher** (latest LTS, required for Vercel deployments)
+- **npm 10.x or higher**
+- **PostgreSQL 14+** (for backend database)
+- **Git**
+
 Each module has its own README with specific setup instructions:
 - [Backend Documentation](./backend/README.md)
 - [Mobile Documentation](./mobile/README.md)
@@ -111,7 +118,19 @@ GitHub Actions workflows automatically run on every push:
 - **Mobile CI**: Lint, format check, type check, tests
 - **Security**: CodeQL scanning
 
-All workflows use Node 20 and ensure code quality before deployment.
+All workflows use **Node 24.x** and ensure code quality before deployment.
+
+## 🚀 Vercel Deployment
+
+The web frontend is automatically deployed to Vercel:
+
+- **Production URL**: https://cinemai-nine.vercel.app
+- **Auto-deployment**: Enabled on push to `main` branch
+- **Node.js Runtime**: 24.x (configured in `vercel.json`)
+- **Build Command**: `cd web && npm install && npm run build`
+- **Output Directory**: `web/dist`
+
+For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md).
 
 ## 📄 License
 
