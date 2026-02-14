@@ -19,3 +19,4 @@ dist-ssr
 # Build
 build
 .cache
+.vercel
