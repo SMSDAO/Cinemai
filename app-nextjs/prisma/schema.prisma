@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
+
+  scripts            Script[]
+  videos             Video[]
+  campaigns          Campaign[]
+  socialAccounts     SocialAccount[]
+  socialPosts        SocialPost[]
+  auditLogs          AuditLog[]
+  policiesAcceptance PoliciesAcceptance[]
+  billingCustomer    BillingCustomer?
+  subscriptions      Subscription[]
+}
+
+// Script model
+model Script {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  content   Json     // Stores structured script: { hook, body, cta, sections }
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videos Video[]
+
+  @@index([userId])
+}
+
+// Video model
+model Video {
+  id             String   @id @default(cuid())
+  userId         String
+  scriptId       String?
+  providerJobId  String?
+  status         String   // queued, processing, ready, failed
+  url            String?
+  thumbnailUrl   String?
+  createdAt      DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  script    Script?    @relation(fields: [scriptId], references: [id], onDelete: SetNull)
+  campaigns Campaign[]
+
+  @@index([userId])
+  @@index([scriptId])
+  @@index([status])
+}
+
+// Campaign model
+model Campaign {
+  id           String   @id @default(cuid())
+  userId       String
+  videoId      String
+  platforms    Json     // Array of platforms: ["twitter", "farcaster"]
+  scheduleTime DateTime?
+  status       String   // draft, scheduled, published, failed
+  logs         Json?    // Array of logs with timestamps
+  createdAt    DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([videoId])
+  @@index([status])
+}
+
+// Social Account model
+model SocialAccount {
+  id              String   @id @default(cuid())
+  userId          String
+  provider        String   // twitter, farcaster
+  handle          String
+  accessTokenRef  String?  // Encrypted reference to stored token
+  createdAt       DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialPosts SocialPost[]
+
+  @@unique([userId, provider])
+  @@index([userId])
+}
+
+// Social Post model
+model SocialPost {
+  id              String   @id @default(cuid())
+  userId          String
+  socialAccountId String
+  platform        String   // twitter, farcaster
+  externalId      String   // Post ID on the platform
+  content         String
+  source          String   // manual, agent
+  createdAt       DateTime @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([socialAccountId])
+  @@index([platform])
+}
+
+// Audit Log model
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // e.g., "script_generated", "video_requested", "likeness_blocked"
+  payload   Json     // Additional data about the action
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// Policies Acceptance model
+model PoliciesAcceptance {
+  id            String   @id @default(cuid())
+  userId        String
+  policyVersion String   // e.g., "v1.0", "v2.0"
+  acceptedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, policyVersion])
+  @@index([userId])
+}
+
+// Billing Customer model
+model BillingCustomer {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+}
+
+// Subscription model
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String
+  stripeSubscriptionId String    @unique
+  plan                 String    // free, pro, scale
+  status               String    // active, canceled, past_due
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
