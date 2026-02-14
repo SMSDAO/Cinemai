@@ -4,7 +4,7 @@ This guide covers how to set up and run the CinemAi Neo backend and mobile app l
 
 ## Prerequisites
 
-- **Node.js** 18+ and npm 9+
+- **Node.js** 20.x or higher and npm 10.x or higher
 - **PostgreSQL** 14+ (for backend database)
 - **Git**
 
