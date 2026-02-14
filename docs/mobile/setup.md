@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-- Node.js >= 20
+- Node.js >= 24
 - React Native CLI
 - Xcode (for iOS)
 - Android Studio (for Android)

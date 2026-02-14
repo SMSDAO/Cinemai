@@ -406,7 +406,7 @@ All new screens follow Neo Glow design system:
 
 ### Tests failing
 1. Install dependencies: `npm install`
-2. Verify Node.js version >= 20
+2. Verify Node.js version >= 24
 3. Check Jest configuration files
 
 ### Password change not working

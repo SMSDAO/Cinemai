@@ -4,7 +4,7 @@ Welcome to CinemAi Neo! This guide will help you set up your development environ
 
 ## 🎯 Prerequisites
 
-- Node.js >= 20
+- Node.js >= 24
 - npm >= 10
 - Docker (optional, for containerized development)
 - PostgreSQL

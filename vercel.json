@@ -6,7 +6,7 @@
   "installCommand": "npm install",
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs24.x"
     }
   },
   "rewrites": [
@@ -35,6 +35,6 @@
     }
   ],
   "env": {
-    "NODE_VERSION": "20"
+    "NODE_VERSION": "24"
   }
 }

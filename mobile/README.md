@@ -102,7 +102,7 @@ Neo Glow design system with:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0
 - npm >= 10.0.0
 - React Native CLI
 - iOS: Xcode 14+
