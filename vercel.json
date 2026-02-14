@@ -3,7 +3,6 @@
   "framework": null,
   "buildCommand": "cd web && npm install && npm run build",
   "outputDirectory": "web/dist",
-  "installCommand": "npm install",
   "functions": {
     "api/**/*.js": {
       "runtime": "nodejs24.x"
