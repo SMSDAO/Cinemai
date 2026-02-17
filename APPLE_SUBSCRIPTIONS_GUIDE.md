@@ -7,7 +7,7 @@ Complete step-by-step guide for implementing Apple In-App Purchases and Subscrip
 CinemAi Neo offers:
 - **Free Tier**: Limited features with trial system
 - **Pro Subscription**: $49/month unlimited access
-- **Trips**: $1 per video (one-time purchases)
+- **Trips**: $1.00 per video (one-time purchases)
 
 ---
 
@@ -68,7 +68,7 @@ CinemAi Neo offers:
 2. Click **+** → **Consumable**
 3. Configure:
    - **Product ID**: `com.cinemai.neo.trip.single`
-   - **Price**: $0.99 USD
+   - **Price**: $0.99 USD (displayed as $1.00 to users)
    - **Display Name**: Single Video Trip
    - **Description**: Create one cinema production or short video
 
@@ -549,7 +549,7 @@ async verifyApplePurchase(
         },
       });
     } else if (productId.includes('trip')) {
-      // Add trip to user
+      // Add trip to user (Apple pricing is $0.99, displayed as $1.00)
       await this.prisma.user.update({
         where: { id: userId },
         data: {
