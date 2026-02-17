@@ -30,7 +30,7 @@ export class RateLimitMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const ip = this.getClientIp(req);
-    const endpoint = this.getEndpointCategory(req.path);
+    const endpoint = this.getEndpointCategory(req.path, req.method);
     const limit = this.limits[endpoint] || this.limits.general;
     
     const key = `${ip}:${endpoint}`;
@@ -104,13 +104,18 @@ export class RateLimitMiddleware implements NestMiddleware {
    *
    * All other endpoints fall under the more permissive "general" bucket.
    */
-  private getEndpointCategory(path: string): 'auth' | 'production' | 'shorts' | 'general' {
-    // Auth endpoints
+  private getEndpointCategory(path: string, method: string): 'auth' | 'production' | 'shorts' | 'general' {
+    // Only apply restrictive limits to POST/PUT/PATCH methods
+    if (method !== 'POST' && method !== 'PUT' && method !== 'PATCH') {
+      return 'general';
+    }
+
+    // Auth endpoints (POST only)
     if (path === '/auth/signup' || path === '/auth/login') {
       return 'auth';
     }
 
-    // Cinema production creation/run endpoints
+    // Cinema production creation/run endpoints (POST only)
     if (path === '/productions') {
       return 'production';
     }
@@ -118,7 +123,7 @@ export class RateLimitMiddleware implements NestMiddleware {
       return 'production';
     }
 
-    // Shorts creation/derivative endpoints
+    // Shorts creation/derivative endpoints (POST only)
     if (path === '/shorts') {
       return 'shorts';
     }

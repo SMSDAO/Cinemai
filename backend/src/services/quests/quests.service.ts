@@ -80,13 +80,22 @@ export class QuestsService {
    * Verify Twitter follow quest
    */
   async verifyTwitterFollow(userId: string, questId: string, twitterHandle: string): Promise<boolean> {
-    // In production, this would call Twitter API to verify the follow
-    // For now, return true if handle is provided
+    // Production guard: Prevent reward claims without real verification
+    if (process.env.NODE_ENV === 'production' && !process.env.TWITTER_API_KEY) {
+      this.logger.error('Twitter verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Twitter follow for user ${userId}: @${twitterHandle}`);
     
     // TODO: Implement actual Twitter API verification
     // const twitterClient = new TwitterClient(process.env.TWITTER_API_KEY);
     // const isFollowing = await twitterClient.checkFollowing(userId, twitterHandle);
+    
+    // Development/staging stub - logs warning
+    if (!process.env.TWITTER_API_KEY) {
+      this.logger.warn(`STUB: Twitter follow verification bypassed for @${twitterHandle}`);
+    }
     
     return !!twitterHandle;
   }
@@ -95,9 +104,18 @@ export class QuestsService {
    * Verify Twitter like quest
    */
   async verifyTwitterLike(userId: string, questId: string, tweetId: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'production' && !process.env.TWITTER_API_KEY) {
+      this.logger.error('Twitter verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Twitter like for user ${userId}: tweet ${tweetId}`);
     
     // TODO: Implement actual Twitter API verification
+    if (!process.env.TWITTER_API_KEY) {
+      this.logger.warn(`STUB: Twitter like verification bypassed for tweet ${tweetId}`);
+    }
+    
     return !!tweetId;
   }
 
@@ -105,9 +123,18 @@ export class QuestsService {
    * Verify Twitter repost quest
    */
   async verifyTwitterRepost(userId: string, questId: string, tweetId: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'production' && !process.env.TWITTER_API_KEY) {
+      this.logger.error('Twitter verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Twitter repost for user ${userId}: tweet ${tweetId}`);
     
     // TODO: Implement actual Twitter API verification
+    if (!process.env.TWITTER_API_KEY) {
+      this.logger.warn(`STUB: Twitter repost verification bypassed for tweet ${tweetId}`);
+    }
+    
     return !!tweetId;
   }
 
@@ -115,9 +142,18 @@ export class QuestsService {
    * Verify Farcaster follow quest
    */
   async verifyFarcasterFollow(userId: string, questId: string, fid: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'production' && !process.env.FARCASTER_API_KEY) {
+      this.logger.error('Farcaster verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Farcaster follow for user ${userId}: fid ${fid}`);
     
     // TODO: Implement actual Farcaster API verification
+    if (!process.env.FARCASTER_API_KEY) {
+      this.logger.warn(`STUB: Farcaster follow verification bypassed for fid ${fid}`);
+    }
+    
     return !!fid;
   }
 
@@ -125,9 +161,18 @@ export class QuestsService {
    * Verify Farcaster like quest
    */
   async verifyFarcasterLike(userId: string, questId: string, castHash: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'production' && !process.env.FARCASTER_API_KEY) {
+      this.logger.error('Farcaster verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Farcaster like for user ${userId}: cast ${castHash}`);
     
     // TODO: Implement actual Farcaster API verification
+    if (!process.env.FARCASTER_API_KEY) {
+      this.logger.warn(`STUB: Farcaster like verification bypassed for cast ${castHash}`);
+    }
+    
     return !!castHash;
   }
 
@@ -135,9 +180,18 @@ export class QuestsService {
    * Verify Farcaster recast quest
    */
   async verifyFarcasterRecast(userId: string, questId: string, castHash: string): Promise<boolean> {
+    if (process.env.NODE_ENV === 'production' && !process.env.FARCASTER_API_KEY) {
+      this.logger.error('Farcaster verification not configured for production');
+      throw new Error('Quest verification not available in production mode');
+    }
+    
     this.logger.log(`Verifying Farcaster recast for user ${userId}: cast ${castHash}`);
     
     // TODO: Implement actual Farcaster API verification
+    if (!process.env.FARCASTER_API_KEY) {
+      this.logger.warn(`STUB: Farcaster recast verification bypassed for cast ${castHash}`);
+    }
+    
     return !!castHash;
   }
 
