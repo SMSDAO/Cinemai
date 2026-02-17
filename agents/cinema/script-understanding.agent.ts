@@ -126,7 +126,7 @@ export class ScriptUnderstandingAgent extends BaseAgent {
 Script:
 ${script}
 
-Provide response as JSON array of scenes with structure:
+Provide response as a JSON object with a "scenes" array:
 {
   "scenes": [
     {
@@ -141,7 +141,6 @@ Provide response as JSON array of scenes with structure:
 }`;
 
     const response = await this.callAIModel(prompt, {
-      model: 'gpt-4-turbo-preview',
       maxTokens: 2000,
       temperature: 0.3,
       responseFormat: 'json',
@@ -208,7 +207,6 @@ Respond in JSON format:
 }`;
 
     const response = await this.callAIModel(prompt, {
-      model: 'gpt-4-turbo-preview',
       temperature: 0.5,
       responseFormat: 'json',
     });

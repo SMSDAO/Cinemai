@@ -519,14 +519,50 @@ button:hover {
 ```typescript
 // Add to main process
 import Store from 'electron-store';
+import jwt from 'jsonwebtoken';
 
 const store = new Store({
-  encryptionKey: 'your-encryption-key',
+  encryptionKey: process.env.ADMIN_ENCRYPTION_KEY || 'change-this-in-production',
 });
 
+/**
+ * Validates an admin auth token.
+ *
+ * This assumes the token is a JWT issued by the AUTH service with a payload
+ * containing at least a `role` claim. The token is verified using a secret
+ * or public key configured in environment variables.
+ */
 function validateAdminToken(token: string): boolean {
-  // Verify with backend
-  return true;
+  if (!token) {
+    return false;
+  }
+
+  const jwtSecretOrPublicKey = process.env.ADMIN_JWT_SECRET_OR_PUBLIC_KEY;
+  if (!jwtSecretOrPublicKey) {
+    // Fail closed if the key is not configured
+    console.error('ADMIN_JWT_SECRET_OR_PUBLIC_KEY not configured');
+    return false;
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecretOrPublicKey);
+
+    if (typeof decoded === 'string' || !decoded) {
+      return false;
+    }
+
+    // Ensure the token represents an admin identity
+    const payload = decoded as { role?: string; [key: string]: unknown };
+    if (payload.role !== 'ADMIN') {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // Token invalid, expired, or otherwise unverifiable
+    console.error('Token validation failed:', error);
+    return false;
+  }
 }
 ```
 

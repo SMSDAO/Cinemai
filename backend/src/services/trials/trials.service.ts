@@ -93,28 +93,65 @@ export class TrialsService {
   }
 
   /**
-   * Consume trial video
+   * Consume trial video (with atomic decrement to prevent race conditions)
    */
   async consumeTrialVideo(userId: string): Promise<void> {
-    const trial = await this.getActiveTrial(userId);
-    
-    if (!trial) {
-      throw new Error('No active trial found');
-    }
+    const now = new Date();
 
-    if (trial.videosRemaining <= 0) {
-      throw new Error('No videos remaining in trial');
-    }
-
-    const updatedTrial = await this.prisma.trial.update({
-      where: { id: trial.id },
+    // Atomically decrement videosRemaining for an active, non-expired trial
+    const decrementResult = await this.prisma.trial.updateMany({
+      where: {
+        userId,
+        status: TrialStatus.ACTIVE,
+        expiresAt: {
+          gte: now,
+        },
+        videosRemaining: {
+          gt: 0,
+        },
+      },
       data: {
-        videosRemaining: trial.videosRemaining - 1,
-        status: trial.videosRemaining - 1 === 0 ? TrialStatus.CONSUMED : TrialStatus.ACTIVE,
+        videosRemaining: {
+          decrement: 1,
+        },
       },
     });
 
-    this.logger.log(`Consumed trial video for user ${userId}. Remaining: ${updatedTrial.videosRemaining}`);
+    // If nothing was updated, either there is no active trial or no remaining videos
+    if (decrementResult.count === 0) {
+      const activeTrial = await this.getActiveTrial(userId);
+
+      if (!activeTrial) {
+        throw new Error('No active trial found');
+      }
+
+      // Active trial exists but doesn't have available videos to consume
+      throw new Error('No videos remaining in trial');
+    }
+
+    // Mark trial as consumed when it reaches 0 remaining videos
+    await this.prisma.trial.updateMany({
+      where: {
+        userId,
+        status: TrialStatus.ACTIVE,
+        expiresAt: {
+          gte: now,
+        },
+        videosRemaining: 0,
+      },
+      data: {
+        status: TrialStatus.CONSUMED,
+      },
+    });
+
+    // Fetch the latest trial state for logging purposes
+    const updatedTrial = await this.getActiveTrial(userId);
+
+    this.logger.log(
+      `Consumed trial video for user ${userId}. Remaining: ${
+        updatedTrial ? updatedTrial.videosRemaining : 'unknown'
+      }`,
+    );
   }
 
   /**
@@ -178,15 +215,20 @@ export class TrialsService {
    */
   async getTrialStats(userId: string): Promise<any> {
     const activeTrial = await this.getActiveTrial(userId);
-    const totalTrials = await this.prisma.trial.count({
-      where: { userId },
+    const totalTrialsUsed = await this.prisma.trial.count({
+      where: {
+        userId,
+        status: {
+          in: [TrialStatus.CONSUMED, TrialStatus.EXPIRED],
+        },
+      },
     });
 
     return {
       hasActiveTrial: !!activeTrial,
       videosRemaining: activeTrial?.videosRemaining || 0,
       expiresAt: activeTrial?.expiresAt,
-      totalTrialsUsed: totalTrials,
+      totalTrialsUsed,
     };
   }
 }

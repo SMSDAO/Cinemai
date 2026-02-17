@@ -55,26 +55,38 @@ export abstract class BaseAgent {
         return this.getMockAIResponse(prompt, options);
       }
 
-      // Make real API call to OpenAI
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: 'system', content: this.systemPrompt },
-            { role: 'user', content: prompt },
-          ],
-          max_tokens: maxTokens,
-          temperature,
-          response_format: options?.responseFormat === 'json' 
-            ? { type: 'json_object' } 
-            : undefined,
-        }),
-      });
+      // Make real API call to OpenAI with timeout handling
+      const controller = new AbortController();
+      const timeoutMs = process.env.OPENAI_TIMEOUT_MS 
+        ? Number(process.env.OPENAI_TIMEOUT_MS) 
+        : 30000;
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      let response: Response;
+      try {
+        response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: this.systemPrompt },
+              { role: 'user', content: prompt },
+            ],
+            max_tokens: maxTokens,
+            temperature,
+            response_format: options?.responseFormat === 'json' 
+              ? { type: 'json_object' } 
+              : undefined,
+          }),
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!response.ok) {
         const error = await response.text();
@@ -103,6 +115,31 @@ export abstract class BaseAgent {
    */
   private getMockAIResponse(prompt: string, options?: any): any {
     this.log('Using mock AI response');
+    
+    // Return JSON-structured mock for JSON requests
+    if (options?.responseFormat === 'json') {
+      return {
+        content: JSON.stringify({
+          scenes: [{
+            sceneNumber: 1,
+            description: 'Mock scene - Configure OPENAI_API_KEY for production',
+            characters: ['Mock Character'],
+            duration: 15,
+            dialogue: 'Mock dialogue',
+            actionNotes: 'Mock action notes',
+          }],
+          themes: ['mock', 'development'],
+          mood: 'mock mood',
+        }),
+        usage: {
+          promptTokens: 100,
+          completionTokens: 50,
+          totalTokens: 150,
+        },
+        isMock: true,
+      };
+    }
+    
     return {
       content: 'Mock AI response - Please configure OPENAI_API_KEY for production use',
       usage: {

@@ -61,6 +61,9 @@ export class RateLimitMiddleware implements NestMiddleware {
       
       this.logger.warn(`Rate limit exceeded for ${ip} on ${endpoint} endpoint`);
       
+      // Set Retry-After header before throwing
+      res.setHeader('Retry-After', retryAfter.toString());
+      
       throw new HttpException(
         {
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
@@ -69,6 +72,11 @@ export class RateLimitMiddleware implements NestMiddleware {
         },
         HttpStatus.TOO_MANY_REQUESTS,
       );
+    }
+    
+    // Opportunistic cleanup of expired entries (every ~100 requests)
+    if (Math.random() < 0.01) {
+      this.cleanupOldEntries();
     }
     
     next();
@@ -88,11 +96,37 @@ export class RateLimitMiddleware implements NestMiddleware {
   
   /**
    * Determine endpoint category for rate limiting
+   * 
+   * We scope restrictive categories to specific write-heavy endpoints:
+   * - Auth: POST /auth/signup, POST /auth/login
+   * - Cinema: POST /productions, POST /productions/:id/run
+   * - Shorts: POST /shorts, POST /shorts/:id/hooks, POST /shorts/:id/variants
+   *
+   * All other endpoints fall under the more permissive "general" bucket.
    */
   private getEndpointCategory(path: string): 'auth' | 'production' | 'shorts' | 'general' {
-    if (path.includes('/auth/')) return 'auth';
-    if (path.includes('/productions')) return 'production';
-    if (path.includes('/shorts')) return 'shorts';
+    // Auth endpoints
+    if (path === '/auth/signup' || path === '/auth/login') {
+      return 'auth';
+    }
+
+    // Cinema production creation/run endpoints
+    if (path === '/productions') {
+      return 'production';
+    }
+    if (/^\/productions\/[^/]+\/run$/.test(path)) {
+      return 'production';
+    }
+
+    // Shorts creation/derivative endpoints
+    if (path === '/shorts') {
+      return 'shorts';
+    }
+    if (/^\/shorts\/[^/]+\/(hooks|variants)$/.test(path)) {
+      return 'shorts';
+    }
+
+    // Everything else uses the general bucket
     return 'general';
   }
   

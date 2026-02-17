@@ -49,6 +49,9 @@ export class QuestsService {
       where: {
         userId_questId: { userId, questId },
       },
+      include: {
+        quest: true,
+      },
     });
 
     if (existingUserQuest) {
@@ -192,32 +195,48 @@ export class QuestsService {
       throw new Error('Quest verification failed');
     }
 
-    // Complete the quest
-    await this.prisma.userQuest.update({
-      where: { id: userQuest.id },
-      data: {
-        status: QuestStatus.COMPLETED,
-        completedAt: new Date(),
-        rewardClaimed: true,
-        verificationData,
-      },
-    });
-
-    // Award videos to user
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        tripsRemaining: {
-          increment: quest.rewardVideos,
+    // Complete the quest and award videos atomically
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Only complete the quest if it is not already completed and reward not yet claimed
+      const questUpdateResult = await tx.userQuest.updateMany({
+        where: {
+          id: userQuest.id,
+          status: {
+            not: QuestStatus.COMPLETED,
+          },
+          rewardClaimed: false,
         },
-      },
+        data: {
+          status: QuestStatus.COMPLETED,
+          completedAt: new Date(),
+          rewardClaimed: true,
+          verificationData,
+        },
+      });
+
+      if (questUpdateResult.count === 0) {
+        // Another request may have already completed this quest and claimed the reward
+        throw new Error('Quest already completed or reward already claimed');
+      }
+
+      // Award videos to user
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          tripsRemaining: {
+            increment: quest.rewardVideos,
+          },
+        },
+      });
+
+      return { videosAwarded: quest.rewardVideos };
     });
 
     this.logger.log(`User ${userId} completed quest ${questId}, awarded ${quest.rewardVideos} videos`);
 
     return {
       success: true,
-      videosAwarded: quest.rewardVideos,
+      videosAwarded: result.videosAwarded,
     };
   }
 

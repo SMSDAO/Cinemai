@@ -517,19 +517,55 @@ Add to `backend/src/services/billing/billing.service.ts`:
 async verifyApplePurchase(
   userId: string,
   receipt: string,
-  productId: string,
-  transactionId: string
+  clientProductId: string,
+  clientTransactionId: string
 ): Promise<{ valid: boolean }> {
   try {
-    // Verify with Apple's servers
+    // Verify with Apple's servers and get receipt details
     const appleResponse = await this.verifyWithApple(receipt);
     
-    if (!appleResponse.valid) {
+    if (!appleResponse.valid || !appleResponse.receiptData) {
       return { valid: false };
     }
     
-    // Handle based on product type
-    if (productId.includes('pro.monthly')) {
+    // Extract actual transaction details from Apple's response
+    const receiptData = appleResponse.receiptData;
+    const latestReceipt = receiptData.latest_receipt_info?.[0] || receiptData.in_app?.[0];
+    
+    if (!latestReceipt) {
+      this.logger.error('No transaction data in Apple receipt');
+      return { valid: false };
+    }
+    
+    // Use Apple's transaction ID and product ID (not client-supplied)
+    const appleTransactionId = latestReceipt.transaction_id || latestReceipt.original_transaction_id;
+    const appleProductId = latestReceipt.product_id;
+    
+    // Validate product ID matches expected app products
+    const validProductIds = [
+      'com.cinemai.neo.pro.monthly',
+      'com.cinemai.neo.trip.single',
+    ];
+    
+    if (!validProductIds.includes(appleProductId)) {
+      this.logger.error(`Invalid product ID from Apple: ${appleProductId}`);
+      return { valid: false };
+    }
+    
+    // Check for duplicate transaction (idempotency)
+    const existingPayment = await this.prisma.payment.findFirst({
+      where: {
+        stripePaymentId: appleTransactionId,
+      },
+    });
+    
+    if (existingPayment) {
+      this.logger.warn(`Transaction ${appleTransactionId} already processed`);
+      return { valid: false };
+    }
+    
+    // Handle based on actual product type from Apple
+    if (appleProductId === 'com.cinemai.neo.pro.monthly') {
       // Update user to Pro subscription
       await this.prisma.user.update({
         where: { id: userId },
@@ -542,14 +578,14 @@ async verifyApplePurchase(
           userId,
           plan: 'PRO',
           amount: 49.99,
-          stripeSubscriptionId: transactionId,
+          stripeSubscriptionId: appleTransactionId,
           status: 'ACTIVE',
           currentPeriodStart: new Date(),
           currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
       });
-    } else if (productId.includes('trip')) {
-      // Add trip to user (Apple pricing is $0.99, displayed as $1.00)
+    } else if (appleProductId === 'com.cinemai.neo.trip.single') {
+      // Add trip to user
       await this.prisma.user.update({
         where: { id: userId },
         data: {
@@ -557,13 +593,13 @@ async verifyApplePurchase(
         },
       });
       
-      // Create payment record
+      // Create payment record (prevents duplicate processing)
       await this.prisma.payment.create({
         data: {
           userId,
           amount: 0.99,
           type: 'TRIP',
-          stripePaymentId: transactionId,
+          stripePaymentId: appleTransactionId,
           status: 'SUCCEEDED',
         },
       });
@@ -576,7 +612,10 @@ async verifyApplePurchase(
   }
 }
 
-private async verifyWithApple(receipt: string): Promise<{ valid: boolean }> {
+private async verifyWithApple(receipt: string): Promise<{ 
+  valid: boolean; 
+  receiptData?: any;
+}> {
   const isProduction = process.env.NODE_ENV === 'production';
   const url = isProduction
     ? 'https://buy.itunes.apple.com/verifyReceipt'
@@ -592,7 +631,12 @@ private async verifyWithApple(receipt: string): Promise<{ valid: boolean }> {
   });
   
   const data = await response.json();
-  return { valid: data.status === 0 };
+  
+  if (data.status === 0) {
+    return { valid: true, receiptData: data.receipt };
+  }
+  
+  return { valid: false };
 }
 ```
 
