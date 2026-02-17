@@ -25,7 +25,7 @@ export abstract class BaseAgent {
   protected abstract validateInput(input: AgentInput): void;
 
   /**
-   * Call AI model (placeholder for actual implementation)
+   * Call AI model with OpenAI API
    */
   protected async callAIModel(
     prompt: string,
@@ -33,25 +33,84 @@ export abstract class BaseAgent {
       model?: string;
       maxTokens?: number;
       temperature?: number;
+      responseFormat?: 'text' | 'json';
     }
   ): Promise<any> {
-    // Placeholder for actual AI model integration
-    // This would call OpenAI, Anthropic, or other AI services
-    console.log(`[${this.agentName}] AI Model Call:`, {
-      prompt: prompt.substring(0, 100) + '...',
-      model: options?.model || 'default',
-      maxTokens: options?.maxTokens || 2000,
-      temperature: options?.temperature || 0.7,
+    const model = options?.model || process.env.DEFAULT_AI_MODEL || 'gpt-4-turbo-preview';
+    const maxTokens = options?.maxTokens || 2000;
+    const temperature = options?.temperature || 0.7;
+
+    this.log('AI Model Call', {
+      model,
+      promptLength: prompt.length,
+      maxTokens,
+      temperature,
     });
 
-    // Return mock response for now
+    try {
+      // Check if OpenAI API key is configured
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        this.log('Warning: OPENAI_API_KEY not configured, using mock response');
+        return this.getMockAIResponse(prompt, options);
+      }
+
+      // Make real API call to OpenAI
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: this.systemPrompt },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: maxTokens,
+          temperature,
+          response_format: options?.responseFormat === 'json' 
+            ? { type: 'json_object' } 
+            : undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`OpenAI API error: ${response.status} - ${error}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content || '';
+
+      return {
+        content,
+        usage: {
+          promptTokens: data.usage?.prompt_tokens || 0,
+          completionTokens: data.usage?.completion_tokens || 0,
+          totalTokens: data.usage?.total_tokens || 0,
+        },
+      };
+    } catch (error) {
+      this.log('AI model call failed, falling back to mock', error);
+      return this.getMockAIResponse(prompt, options);
+    }
+  }
+
+  /**
+   * Get mock AI response for development/fallback
+   */
+  private getMockAIResponse(prompt: string, options?: any): any {
+    this.log('Using mock AI response');
     return {
-      content: 'AI response placeholder',
+      content: 'Mock AI response - Please configure OPENAI_API_KEY for production use',
       usage: {
         promptTokens: 100,
         completionTokens: 50,
         totalTokens: 150,
       },
+      isMock: true,
     };
   }
 

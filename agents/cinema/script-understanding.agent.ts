@@ -115,34 +115,57 @@ export class ScriptUnderstandingAgent extends BaseAgent {
   private async detectScenes(script: string): Promise<SceneBreakdown[]> {
     this.log('Detecting scenes');
 
-    const prompt = PromptTemplates.scriptUnderstanding(script);
+    const prompt = `Analyze this script and break it down into distinct scenes. For each scene provide:
+- Scene number
+- Description (2-3 sentences)
+- Characters involved
+- Estimated duration in seconds
+- Key dialogue
+- Action notes
+
+Script:
+${script}
+
+Provide response as JSON array of scenes with structure:
+{
+  "scenes": [
+    {
+      "sceneNumber": 1,
+      "description": "...",
+      "characters": ["..."],
+      "duration": 15,
+      "dialogue": "...",
+      "actionNotes": "..."
+    }
+  ]
+}`;
+
     const response = await this.callAIModel(prompt, {
-      model: 'gpt-4',
+      model: 'gpt-4-turbo-preview',
       maxTokens: 2000,
       temperature: 0.3,
+      responseFormat: 'json',
     });
 
-    // Mock scene breakdown
-    const scenes: SceneBreakdown[] = [
-      {
-        sceneNumber: 1,
-        description: 'Opening scene - establishing shot',
-        characters: ['Protagonist'],
-        duration: 15,
-        dialogue: 'Opening dialogue...',
-        actionNotes: 'Character enters frame, looks determined',
-      },
-      {
-        sceneNumber: 2,
-        description: 'Conflict introduction',
-        characters: ['Protagonist', 'Antagonist'],
-        duration: 20,
-        dialogue: 'Conflict dialogue...',
-        actionNotes: 'Tension builds between characters',
-      },
-    ];
+    try {
+      // Parse AI response
+      const parsed = JSON.parse(response.content);
+      if (parsed.scenes && Array.isArray(parsed.scenes)) {
+        return parsed.scenes;
+      }
+    } catch (error) {
+      this.log('Failed to parse AI response, using fallback', error);
+    }
 
-    return scenes;
+    // Fallback: Create simple single scene
+    return [{
+      sceneNumber: 1,
+      description: 'Single scene production',
+      characters: ['Main'],
+      duration: 30,
+      dialogue: script.substring(0, 200),
+      actionNotes: 'Production based on provided script',
+    }];
   }
 
   /**
@@ -176,17 +199,33 @@ export class ScriptUnderstandingAgent extends BaseAgent {
 1. Main themes (3-5 themes)
 2. Overall mood/tone
 
-Script: ${script}`;
+Script: ${script}
+
+Respond in JSON format:
+{
+  "themes": ["theme1", "theme2", "theme3"],
+  "mood": "overall mood description"
+}`;
 
     const response = await this.callAIModel(prompt, {
-      model: 'gpt-4',
+      model: 'gpt-4-turbo-preview',
       temperature: 0.5,
+      responseFormat: 'json',
     });
 
-    // Mock response
+    try {
+      const parsed = JSON.parse(response.content);
+      if (parsed.themes && parsed.mood) {
+        return parsed;
+      }
+    } catch (error) {
+      this.log('Failed to parse themes, using defaults', error);
+    }
+
+    // Fallback
     return {
-      themes: ['redemption', 'perseverance', 'transformation'],
-      mood: 'dramatic and hopeful',
+      themes: ['cinematic', 'storytelling', 'creative'],
+      mood: 'engaging and visual',
     };
   }
 }

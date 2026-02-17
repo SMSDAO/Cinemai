@@ -105,6 +105,28 @@ enum EventType {
   CONTENT_LIKED
 }
 
+enum TrialStatus {
+  ACTIVE
+  EXPIRED
+  CONSUMED
+}
+
+enum QuestType {
+  TWITTER_FOLLOW
+  TWITTER_LIKE
+  TWITTER_REPOST
+  FARCASTER_FOLLOW
+  FARCASTER_LIKE
+  FARCASTER_RECAST
+}
+
+enum QuestStatus {
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+}
+
 // ============================================================================
 // USER MODEL
 // ============================================================================
@@ -140,6 +162,8 @@ model User {
   likes            Like[]
   timelineEvents   TimelineEvent[]
   streamSessions   StreamSession[]
+  trials           Trial[]
+  quests           UserQuest[]
 }
 
 // ============================================================================
@@ -414,4 +438,60 @@ model StreamSession {
   
   @@index([userId])
   @@index([lastSyncAt])
+}
+
+// ============================================================================
+// TRIALS & REWARDS MODELS
+// ============================================================================
+
+model Trial {
+  id              String      @id @default(cuid())
+  userId          String
+  videosRemaining Int         @default(1)
+  status          TrialStatus @default(ACTIVE)
+  expiresAt       DateTime
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model Quest {
+  id              String      @id @default(cuid())
+  type            QuestType
+  title           String
+  description     String      @db.Text
+  rewardVideos    Int         @default(1)
+  requiredAction  String
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  userQuests      UserQuest[]
+  
+  @@index([isActive])
+}
+
+model UserQuest {
+  id              String      @id @default(cuid())
+  userId          String
+  questId         String
+  status          QuestStatus @default(AVAILABLE)
+  verificationData Json?
+  completedAt     DateTime?
+  rewardClaimed   Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest           Quest       @relation(fields: [questId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, questId])
+  @@index([userId])
+  @@index([questId])
+  @@index([status])
 }
