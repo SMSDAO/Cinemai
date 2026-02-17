@@ -1,8 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { RateLimitMiddleware } from './middleware/rate-limit.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Apply rate limiting middleware globally
+  app.use(new RateLimitMiddleware().use);
 
   // Enable CORS with production and preview domain support
   app.enableCors({

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QuestsService } from '../src/services/quests/quests.service';
-import { PrismaService } from '../src/services/prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 import { QuestType, QuestStatus } from '@prisma/client';
 
 describe('QuestsService', () => {
