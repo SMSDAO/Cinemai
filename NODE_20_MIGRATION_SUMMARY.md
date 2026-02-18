@@ -166,7 +166,7 @@ npm install --legacy-peer-deps
 
 **Web**:
 ```bash
-cd web
+cd app-nextjs
 rm -rf node_modules package-lock.json
 npm install
 ```

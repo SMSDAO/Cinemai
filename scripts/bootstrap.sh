@@ -7,6 +7,10 @@ echo "🚀 Bootstrapping CinemAi Neo..."
 echo "📦 Installing backend dependencies..."
 cd backend && npm install && cd ..
 
+# Install web dependencies
+echo "🌐 Installing web dependencies..."
+cd app-nextjs && npm install && cd ..
+
 # Install mobile dependencies
 echo "📱 Installing mobile dependencies..."
 cd mobile && npm install && cd ..

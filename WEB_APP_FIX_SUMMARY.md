@@ -114,7 +114,7 @@ Admin access granted ✅
 ## Build Verification
 
 ```bash
-cd web && npm run build
+cd app-nextjs && npx prisma generate && npm run build
 ```
 
 **Result:**
@@ -200,8 +200,8 @@ VITE_API_URL=https://api.cinemai.production.com
 Already configured in root `vercel.json`:
 ```json
 {
-  "buildCommand": "cd web && npm install && npm run build",
-  "outputDirectory": "web/dist"
+  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
+  "outputDirectory": "app-nextjs/.next"
 }
 ```
 

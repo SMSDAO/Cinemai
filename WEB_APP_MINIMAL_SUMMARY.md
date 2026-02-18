@@ -368,12 +368,12 @@ Local State:
 
 **Build Command:**
 ```bash
-cd web && npm install && npm run build
+cd app-nextjs && npx prisma generate && npm run build
 ```
 
 **Output Directory:**
 ```
-web/dist
+app-nextjs/.next
 ```
 
 **Environment Variables:**

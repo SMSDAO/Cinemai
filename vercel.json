@@ -1,19 +1,9 @@
 {
   "version": 2,
-  "framework": null,
-  "buildCommand": "cd web && npm install && npm run build",
-  "outputDirectory": "web/dist",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs24.x"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
+  "framework": "nextjs",
+  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
+  "outputDirectory": "app-nextjs/.next",
+  "installCommand": "cd app-nextjs && npm install",
   "headers": [
     {
       "source": "/(.*)",
@@ -29,11 +19,12 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
       ]
     }
-  ],
-  "env": {
-    "NODE_VERSION": "24"
-  }
+  ]
 }

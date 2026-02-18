@@ -127,8 +127,8 @@ The web frontend is automatically deployed to Vercel:
 - **Production URL**: https://cinemai-nine.vercel.app
 - **Auto-deployment**: Enabled on push to `main` branch
 - **Node.js Runtime**: 24.x (configured in `vercel.json`)
-- **Build Command**: `cd web && npm install && npm run build`
-- **Output Directory**: `web/dist`
+- **Build Command**: `cd app-nextjs && npx prisma generate && npm run build`
+- **Output Directory**: `app-nextjs/.next`
 
 For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md).
 

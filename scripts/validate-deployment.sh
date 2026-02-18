@@ -99,10 +99,10 @@ fi
 cd ..
 
 echo ""
-echo "Phase 3: Web Frontend Validation"
+echo "Phase 3: Web Frontend Validation (Next.js)"
 echo "---------------------------------"
 
-cd web || exit 1
+cd app-nextjs || exit 1
 
 # Install dependencies
 if npm install > /dev/null 2>&1; then
@@ -113,8 +113,7 @@ fi
 
 # Build
 if npm run build > /tmp/web-build.log 2>&1; then
-    BUILD_SIZE=$(grep "dist/assets/index-.*\.js" /tmp/web-build.log | awk '{print $2}')
-    print_status 0 "Web build: $BUILD_SIZE"
+    print_status 0 "Web build successful"
 else
     print_status 1 "Web build failed (see /tmp/web-build.log)"
 fi
@@ -182,7 +181,7 @@ else
 fi
 
 # Check web package.json engines
-WEB_NODE=$(grep -A 1 '"engines"' web/package.json | grep "node" | grep -o ">=.*\"" | tr -d '">=' | cut -d'.' -f1)
+WEB_NODE=$(grep -A 1 '"engines"' app-nextjs/package.json | grep "node" | grep -o ">=.*\"" | tr -d '">=' | cut -d'.' -f1)
 if [ "$WEB_NODE" = "24" ]; then
     print_status 0 "Web requires Node 24.x"
 else

@@ -333,8 +333,8 @@ Users should feel at home switching between mobile and web:
 ### Vercel Deployment
 ```json
 {
-  "buildCommand": "cd web && npm run build",
-  "outputDirectory": "web/dist",
+  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
+  "outputDirectory": "app-nextjs/.next",
   "framework": "vite",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }

@@ -329,8 +329,8 @@ npm run build
 ### Vercel Deployment
 ```json
 {
-  "buildCommand": "cd web && npm install && npm run build",
-  "outputDirectory": "web/dist",
+  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
+  "outputDirectory": "app-nextjs/.next",
   "framework": "vite"
 }
 ```

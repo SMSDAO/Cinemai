@@ -162,8 +162,8 @@ Configured for Vercel deployment via root `vercel.json`:
 
 ```json
 {
-  "buildCommand": "cd web && npm install && npm run build",
-  "outputDirectory": "web/dist"
+  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
+  "outputDirectory": "app-nextjs/.next"
 }
 ```
 

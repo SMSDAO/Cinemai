@@ -344,7 +344,7 @@ All Checked? READY FOR PRODUCTION! 🚀
 
 ```bash
 # Local Development
-cd web
+cd app-nextjs
 cp .env.example .env
 # Edit .env: VITE_API_URL=http://localhost:3000
 npm install

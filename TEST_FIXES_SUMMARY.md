@@ -333,7 +333,7 @@ cd backend && DATABASE_URL="..." npm test
 cd mobile && npm test
 
 # Web build verification
-cd web && npm run build
+cd app-nextjs && npx prisma generate && npm run build
 ```
 
 All tests now pass successfully and the repository is ready for merge! 🎉

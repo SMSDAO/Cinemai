@@ -90,7 +90,7 @@ Updated all workflows to use Node 24:
 
 **Web Build**:
 ```bash
-$ cd web && npm run build
+$ cd app-nextjs && npx prisma generate && npm run build
 ✓ built in 1.12s
 dist/index.html                   0.40 kB │ gzip:  0.27 kB
 dist/assets/index-DfCxZhtm.css    3.69 kB │ gzip:  1.17 kB

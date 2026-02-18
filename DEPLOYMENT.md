@@ -3,7 +3,7 @@
 ## Overview
 
 This repository contains three deployable components:
-1. **Web App** (React + Vite) → Deploys to Vercel
+1. **Web App** (Next.js) → Deploys to Vercel
 2. **Backend API** (NestJS) → Deploys to Railway/Render/Fly.io
 3. **Mobile App** (React Native + Expo) → Deploys to app stores
 
@@ -20,7 +20,7 @@ The CinemAi Neo web app is configured for automatic deployment to Vercel.
 ### Essential Information
 
 **What's Deployed:**
-- Full React web application (8 routes)
+- Full Next.js web application
 - Login, Signup, Dashboard, Timeline, Profile, Create, Admin pages
 - Neo Glow UI with dark theme
 - Responsive mobile-first design
@@ -28,7 +28,7 @@ The CinemAi Neo web app is configured for automatic deployment to Vercel.
 **Requirements:**
 - Vercel account connected to GitHub
 - Backend API running and accessible
-- Environment variable `VITE_API_URL` configured
+- Environment variable `NEXT_PUBLIC_API_URL` configured
 
 **Quick Setup:**
 
@@ -37,9 +37,9 @@ The CinemAi Neo web app is configured for automatic deployment to Vercel.
    - Vercel auto-detects configuration
 
 2. **Set Environment Variables**
-   - Production: `VITE_API_URL=https://cinemai-bice.vercel.app/api`
-   - Preview: `VITE_API_URL=https://cinemai-bice.vercel.app/api`
-   - Development: `VITE_API_URL=http://localhost:3000`
+   - Production: `NEXT_PUBLIC_API_URL=https://cinemai-bice.vercel.app/api`
+   - Preview: `NEXT_PUBLIC_API_URL=https://cinemai-bice.vercel.app/api`
+   - Development: `NEXT_PUBLIC_API_URL=http://localhost:3000`
 
 3. **Deploy**
    - Push to `main` branch for production
@@ -49,10 +49,9 @@ The CinemAi Neo web app is configured for automatic deployment to Vercel.
 
 **File:** `vercel.json`
 
-- **Build Command:** `cd web && npm install && npm run build`
-- **Output Directory:** `web/dist`
-- **Framework:** Vite
-- **SPA Rewrites:** All routes → `/index.html`
+- **Build Command:** `cd app-nextjs && npx prisma generate && npm run build`
+- **Output Directory:** `app-nextjs/.next`
+- **Framework:** Next.js
 - **Security Headers:** X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
 
 ---

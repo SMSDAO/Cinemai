@@ -99,7 +99,7 @@ VITE_API_URL=http://localhost:3000
 
 ```bash
 # 1. Navigate to web directory
-cd web
+cd app-nextjs
 
 # 2. Copy example file
 cp .env.example .env

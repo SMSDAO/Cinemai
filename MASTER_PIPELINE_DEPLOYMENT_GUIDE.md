@@ -704,7 +704,7 @@ API_BASE_URL=https://cinemai-bice.vercel.app/api
 cd backend && npm install && npm run prisma:generate && npm run build
 
 # Web
-cd web && npm install && npm run build
+cd app-nextjs && npx prisma generate && npm run build
 
 # Mobile
 cd mobile && npm install --legacy-peer-deps
@@ -716,7 +716,7 @@ cd backend && npx prisma migrate deploy && npm run seed
 cd backend && npm run dev
 
 # Test web locally
-cd web && npm run dev
+cd app-nextjs && npm run dev
 
 # Test mobile
 cd mobile && npm start
