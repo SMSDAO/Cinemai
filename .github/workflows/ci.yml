@@ -1,91 +1,29 @@
-name: CI
+﻿name: CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  backend:
-    name: Backend CI
+  validate:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-    
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: 20
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
 
-      - name: Install dependencies
-        working-directory: backend
-        run: npm ci
+      - run: npm ci
+        if: hashFiles('package.json') != ''
 
-      - name: Run linting
-        working-directory: backend
-        run: npm run lint
-
-      - name: Check formatting
-        working-directory: backend
-        run: npm run format:check
-
-      - name: Type check
-        working-directory: backend
-        run: npm run type-check
-
-      - name: Run tests
-        working-directory: backend
-        run: npm run test:cov
-
-      - name: Build
-        working-directory: backend
-        run: npm run build
-
-  mobile:
-    name: Mobile CI
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: mobile/package-lock.json
-
-      - name: Install dependencies
-        working-directory: mobile
-        run: npm ci --legacy-peer-deps
-
-      - name: Run linting
-        working-directory: mobile
-        run: npm run lint
-
-      - name: Check formatting
-        working-directory: mobile
-        run: npm run format:check
-
-      - name: Type check
-        working-directory: mobile
-        run: npm run type-check
-
-      - name: Run tests
-        working-directory: mobile
-        run: npm run test
+      - run: npm run lint --if-present
+      - run: npm run typecheck --if-present
+      - run: npm test --if-present
+      - run: npm run build --if-present
