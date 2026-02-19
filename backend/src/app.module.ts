@@ -15,6 +15,8 @@ import { TimelineService } from './services/timeline/timeline.service';
 import { DashboardService } from './services/dashboard/dashboard.service';
 import { SyncService } from './services/sync/sync.service';
 import { AdminService } from './services/admin/admin.service';
+import { TrialsService } from './services/trials/trials.service';
+import { QuestsService } from './services/quests/quests.service';
 
 // Controllers
 import { AuthController } from './api/auth/auth.controller';
@@ -64,6 +66,8 @@ import { AdminController } from './api/admin/admin.controller';
     DashboardService,
     SyncService,
     AdminService,
+    TrialsService,
+    QuestsService,
   ],
 })
 export class AppModule {}
