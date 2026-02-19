@@ -4,6 +4,7 @@
   "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
   "outputDirectory": "app-nextjs/.next",
   "installCommand": "cd app-nextjs && npm install",
+  "nodeVersion": "20.x"
   "headers": [
     {
       "source": "/(.*)",
