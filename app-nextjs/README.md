@@ -17,7 +17,7 @@ Generate professional promo video scripts, orchestrate AI video generation with 
 
 ### Prerequisites
 
-- **Node.js 20.x or higher**
+- **Node.js 24.x or higher**
 - **npm 10.x or higher**
 - **PostgreSQL database** (Neon Postgres recommended)
 - **Stripe account** for billing

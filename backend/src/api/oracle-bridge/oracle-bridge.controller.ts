@@ -3,7 +3,11 @@ import { OracleSyncService } from '../../services/oracle-sync/oracle-sync.servic
 
 /**
  * Oracle Bridge API Controller
- * REST endpoints for Oracle database synchronization
+ * REST endpoints for optional enterprise mirroring to Oracle database
+ *
+ * This is an optional integration. When configured, it mirrors production
+ * data (users, productions, shorts, metrics) to an Oracle database for
+ * enterprise reporting or external analytics consumers.
  *
  * Endpoints:
  * - POST /oracle/sync/full

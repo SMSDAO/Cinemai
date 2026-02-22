@@ -21,12 +21,13 @@ The page features our Neo Glow design system with:
 - Magenta secondary glow (#FF2EF5)
 - Responsive mobile-first layout
 
-## 🏗️ Monorepo Structure
+## 🏗️ Repository Structure
 
-This is a monorepo containing all services, applications, and infrastructure for the CinemAi Neo platform:
+This is a standalone repository containing all services, applications, and infrastructure for the CinemAi Neo platform:
 
 ### 📦 Core Directories
 
+- **`app-nextjs/`** - Next.js primary web application (AI agents, dashboard, campaigns)
 - **`backend/`** - NestJS backend API with services, models, queues, and utilities
 - **`mobile/`** - React Native mobile application for iOS and Android
 - **`agents/`** - AI agents for cinema, shorts, and growth automation
@@ -36,6 +37,7 @@ This is a monorepo containing all services, applications, and infrastructure for
 - **`scripts/`** - Utility scripts for bootstrapping, deployment, and maintenance
 - **`config/`** - Environment-specific configuration files
 - **`public/`** - Static landing page and web assets
+- **`web/`** - Minimal legacy web implementation (optional, React + Vite)
 
 ## 🚀 Getting Started
 
@@ -70,22 +72,14 @@ npm start
 
 ## 🚢 Deployment
 
-### Vercel (Landing Page)
+### Vercel (Primary — Web Frontend + Backend)
 
-The static landing page is deployed on Vercel:
+Both the `app-nextjs` web application and the NestJS backend API are deployed to Vercel:
 
 1. Connected to this GitHub repository
 2. Automatic deployments on push to `main`
-3. Configuration in `vercel.json`
-4. See [DEPLOYMENT.md](./DEPLOYMENT.md) for details
-
-### Backend Deployment
-
-The NestJS backend should be deployed separately to:
-- Railway (recommended)
-- Render
-- AWS ECS/EKS
-- DigitalOcean App Platform
+3. Configuration in root `vercel.json`
+4. See [DEPLOYMENT.md](./DEPLOYMENT.md) and [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) for details
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for full deployment guide.
 

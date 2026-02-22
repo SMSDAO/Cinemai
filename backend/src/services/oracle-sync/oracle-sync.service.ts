@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 /**
  * Oracle Sync Service
- * Handles Oracle database synchronization
+ * Handles optional enterprise mirroring to Oracle database
  * - Data mirroring
  * - Sync operations
- * - Legacy system integration
+ * - Enterprise mirroring integration
  */
 @Injectable()
 export class OracleSyncService {

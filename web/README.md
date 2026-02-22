@@ -158,13 +158,13 @@ npm run build
 
 ## Deployment
 
-Configured for Vercel deployment via root `vercel.json`:
+> **Note**: This `web/` folder is a minimal legacy implementation. The primary web application is `app-nextjs/`, which is deployed to Vercel via root `vercel.json`.
 
-```json
-{
-  "buildCommand": "cd app-nextjs && npx prisma generate && npm run build",
-  "outputDirectory": "app-nextjs/.next"
-}
+For development use only:
+
+```bash
+npm run build
+# Output: web/dist/
 ```
 
 ## License

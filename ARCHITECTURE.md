@@ -65,9 +65,9 @@ Automate social media publishing and analytics:
 │  ┌──────┐ ┌──────┐ ┌────────┐ ┌────────┐ ┌────────┐       │
 │  │ AUTH │ │ USER │ │BILLING │ │ CINEMA │ │ SHORTS │       │
 │  └──────┘ └──────┘ └────────┘ └────────┘ └────────┘       │
-│  ┌────────┐ ┌──────────┐ ┌────────────────┐               │
-│  │ GROWTH │ │BRAND KIT │ │ ORACLE BRIDGE  │               │
-│  └────────┘ └──────────┘ └────────────────┘               │
+│  ┌────────┐ ┌──────────┐ ┌──────────────────────────────┐               │
+│  │ GROWTH │ │BRAND KIT │ │ ORACLE BRIDGE (optional)     │               │
+│  └────────┘ └──────────┘ └──────────────────────────────┘               │
 └────────────────────────┬────────────────────────────────────┘
                          │
                          ▼
@@ -91,10 +91,10 @@ Automate social media publishing and analytics:
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   DATA & STORAGE                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │
-│  │PostgreSQL│  │ S3/R2    │  │  Oracle  │                  │
-│  │(Primary) │  │ (Assets) │  │ (Mirror) │                  │
-│  └──────────┘  └──────────┘  └──────────┘                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────────┐                  │
+│  │PostgreSQL│  │ S3/R2    │  │  Oracle (optional)   │                  │
+│  │(Primary) │  │ (Assets) │  │  Enterprise Mirror   │                  │
+│  └──────────┘  └──────────┘  └──────────────────────┘                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -186,11 +186,11 @@ Automate social media publishing and analytics:
 - `PUT /brandkit/:id`
 - `GET /brandkit`
 
-### 8. ORACLE BRIDGE Service
-**Responsibility**: Oracle database synchronization
-- Data mirroring
+### 8. ORACLE BRIDGE Service (Optional)
+**Responsibility**: Optional enterprise mirroring integration
+- Data mirroring to Oracle database
 - Sync operations
-- Legacy system integration
+- Enterprise mirroring integration
 
 ---
 
@@ -532,6 +532,20 @@ cinemai-neo/
 │   ├── package.json
 │   └── tsconfig.json
 │
+├── app-nextjs/              # Next.js web application (primary web interface)
+│   ├── app/                # Next.js App Router pages
+│   ├── components/         # React components
+│   ├── lib/                # Utility functions
+│   ├── prisma/             # Database schema for web app
+│   ├── public/             # Static assets
+│   ├── package.json
+│   └── next.config.js
+│
+├── web/                     # Minimal legacy web implementation (optional)
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.ts
+│
 ├── mobile/                  # React Native app
 │   ├── src/
 │   │   ├── screens/
@@ -606,6 +620,8 @@ cinemai-neo/
 │   ├── staging.json
 │   ├── production.json
 │   └── secrets.example.json
+│
+├── public/                  # Static landing page assets
 │
 ├── .github/
 │   ├── copilot-instructions.md

@@ -458,19 +458,21 @@ Pro
 
 ---
 
-10. 🏛️ Oracle Bridge (Final)
+10. 🏛️ Oracle Bridge (Optional Enterprise Mirroring Integration)
 
 Primary DB: Postgres
 
-Bridge Service:
+Optional Bridge Service:
 
-• Mirrors:• Users
-• Productions
-• Shorts
-• Metrics
+• When configured, mirrors:
+  • Users
+  • Productions
+  • Shorts
+  • Metrics
 
 • Into Oracle XE / Free Tier
-• For enterprise agents
+• For enterprise reporting or external analytics consumers
+• Not required for standard operation
 
 
 ---
@@ -488,18 +490,16 @@ Bridge Service:
 
 12. 🎯 This is the complete system
 
-Everything from:
+This unified blueprint covers the full CinemAi Neo platform:
 
-• CinemAi.xyz
-• Short.ai
 • Your Production Pack concept
 • Your Trips + Pro model
 • Your Neo Glow UI
-• Your Oracle agent bridge
+• Optional Oracle enterprise mirroring integration
 • Your mobile-first UX
 • Your cinematic pipeline
 • Your shorts pipeline
 • Your growth engine
 
 
-…is now merged into one unified, production-ready blueprint.
+…all merged into one unified, production-ready blueprint.
