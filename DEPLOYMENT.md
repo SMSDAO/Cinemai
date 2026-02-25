@@ -60,15 +60,11 @@ The CinemAi Neo web app (`app-nextjs`) is configured for automatic deployment to
 
 ## 🔧 Backend API Deployment
 
-### Primary: Vercel
+The backend NestJS API (`backend/`) runs as a standard long-running server (`app.listen(...)`) and must be deployed to a platform that supports persistent processes.
 
-The backend NestJS API is deployed to Vercel using serverless functions. See [MASTER_PIPELINE_DEPLOYMENT_GUIDE.md](./MASTER_PIPELINE_DEPLOYMENT_GUIDE.md) for the complete deployment procedure.
+### Recommended Platforms
 
-### Alternative Platforms
-
-If a long-running server process is required (e.g., for persistent queue workers):
-
-1. **Railway** ⭐ Recommended alternative
+1. **Railway** ⭐ Recommended
    - Easy NestJS deployment
    - Built-in PostgreSQL
    - Automatic HTTPS
@@ -83,6 +79,11 @@ If a long-running server process is required (e.g., for persistent queue workers
    - Global deployment
    - Containerized apps
    - PostgreSQL support
+
+4. **Vercel (separate project)**
+   - Set root directory to `backend/` in the Vercel project settings
+   - Requires adding a `@vercel/node` serverless adapter and converting `main.ts` to a serverless handler
+   - See [MASTER_PIPELINE_DEPLOYMENT_GUIDE.md](./MASTER_PIPELINE_DEPLOYMENT_GUIDE.md) for details
 
 ### Backend Requirements
 

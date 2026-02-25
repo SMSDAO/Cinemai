@@ -72,16 +72,18 @@ npm start
 
 ## 🚢 Deployment
 
-### Vercel (Primary — Web Frontend + Backend)
+### Vercel (Web Frontend)
 
-Both the `app-nextjs` web application and the NestJS backend API are deployed to Vercel:
+The `app-nextjs` web application is deployed to Vercel via the root `vercel.json`:
 
 1. Connected to this GitHub repository
 2. Automatic deployments on push to `main`
 3. Configuration in root `vercel.json`
 4. See [DEPLOYMENT.md](./DEPLOYMENT.md) and [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) for details
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for full deployment guide.
+### Backend Deployment
+
+The NestJS backend is deployed separately (Railway, Render, Fly.io, or a dedicated Vercel project with root directory `backend/`). See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full guide.
 
 ## 📚 Documentation
 
