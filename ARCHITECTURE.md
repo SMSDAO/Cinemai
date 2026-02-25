@@ -539,7 +539,7 @@ cinemai-neo/
 │   ├── prisma/             # Database schema for web app
 │   ├── public/             # Static assets
 │   ├── package.json
-│   └── next.config.js
+│   └── next.config.ts
 │
 ├── web/                     # Minimal legacy web implementation (optional)
 │   ├── src/
