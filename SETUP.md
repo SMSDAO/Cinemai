@@ -184,7 +184,7 @@ npm run format:check  # Check formatting without writing
 
 ## Full Test Suite
 
-To run all tests across the entire monorepo:
+To run all tests across the entire repository:
 
 ```bash
 # Backend tests

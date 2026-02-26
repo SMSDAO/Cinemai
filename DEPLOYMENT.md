@@ -3,9 +3,11 @@
 ## Overview
 
 This repository contains three deployable components:
-1. **Web App** (Next.js) → Deploys to Vercel
-2. **Backend API** (NestJS) → Deploys to Railway/Render/Fly.io
+1. **Web App** (`app-nextjs`, Next.js) → Deploys to Vercel (primary)
+2. **Backend API** (NestJS) → Deploys to Vercel (primary) or Railway/Render/Fly.io
 3. **Mobile App** (React Native + Expo) → Deploys to app stores
+
+> **Note**: The `web/` folder contains a minimal legacy Vite/React implementation and is optional.
 
 ---
 
@@ -13,15 +15,15 @@ This repository contains three deployable components:
 
 ### Quick Start
 
-The CinemAi Neo web app is configured for automatic deployment to Vercel.
+The CinemAi Neo web app (`app-nextjs`) is configured for automatic deployment to Vercel.
 
 **📖 Complete Guide:** See [`VERCEL_DEPLOYMENT_GUIDE.md`](./VERCEL_DEPLOYMENT_GUIDE.md) for detailed instructions.
 
 ### Essential Information
 
 **What's Deployed:**
-- Full Next.js web application
-- Login, Signup, Dashboard, Timeline, Profile, Create, Admin pages
+- Full Next.js web application (`app-nextjs/`)
+- AI agent dashboard, scripts, videos, campaigns, and settings pages
 - Neo Glow UI with dark theme
 - Responsive mobile-first design
 
@@ -58,14 +60,9 @@ The CinemAi Neo web app is configured for automatic deployment to Vercel.
 
 ## 🔧 Backend API Deployment
 
+The backend NestJS API (`backend/`) runs as a standard long-running server (`app.listen(...)`) and must be deployed to a platform that supports persistent processes.
+
 ### Recommended Platforms
-
-The backend NestJS API is **NOT** deployed to Vercel because:
-- NestJS requires a long-running server process
-- Vercel serverless functions have time limits (10s Hobby, 60s Pro)
-- Database connections need persistent management
-
-**Best Options:**
 
 1. **Railway** ⭐ Recommended
    - Easy NestJS deployment
@@ -83,9 +80,10 @@ The backend NestJS API is **NOT** deployed to Vercel because:
    - Containerized apps
    - PostgreSQL support
 
-4. **Railway/Render/DigitalOcean**
-   - Cost-effective
-   - Simple setup
+4. **Vercel (separate project)**
+   - Set root directory to `backend/` in the Vercel project settings
+   - Requires adding a `@vercel/node` serverless adapter and converting `main.ts` to a serverless handler
+   - See [MASTER_PIPELINE_DEPLOYMENT_GUIDE.md](./MASTER_PIPELINE_DEPLOYMENT_GUIDE.md) for details
 
 ### Backend Requirements
 
@@ -107,7 +105,7 @@ Backend must allow these origins (already configured):
 
 **File:** `backend/src/main.ts` (lines 7-16)
 
-**📖 Backend Setup:** See [`BACKEND_PRODUCTION_FIXES.md`](./BACKEND_PRODUCTION_FIXES.md) for complete guide.
+**📖 Backend Setup:** See [`SETUP.md`](./SETUP.md) and [`MASTER_PIPELINE_DEPLOYMENT_GUIDE.md`](./MASTER_PIPELINE_DEPLOYMENT_GUIDE.md) for the complete backend configuration guide.
 
 ## CI/CD Pipeline
 
