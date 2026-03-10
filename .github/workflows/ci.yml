@@ -16,6 +16,8 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      DATABASE_URL: postgresql://localhost:5432/db?schema=public
     steps:
       - uses: actions/checkout@v4
 
