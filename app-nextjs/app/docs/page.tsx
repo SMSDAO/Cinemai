@@ -7,30 +7,34 @@ const docLinks = [
   {
     title: "Architecture",
     description: "Full system architecture, microservices, and pipeline documentation.",
-    href: "/ARCHITECTURE.md",
+    href: "https://github.com/SMSDAO/Cinemai/blob/main/ARCHITECTURE.md",
     icon: Rocket,
     color: "text-primary",
+    external: true,
   },
   {
     title: "Deployment Guide",
     description: "Step-by-step Vercel deployment instructions and environment setup.",
-    href: "/DEPLOYMENT.md",
+    href: "https://github.com/SMSDAO/Cinemai/blob/main/DEPLOYMENT.md",
     icon: Rocket,
     color: "text-secondary",
+    external: true,
   },
   {
     title: "API Reference",
     description: "REST API endpoints, authentication, and request/response examples.",
-    href: "/docs/api",
+    href: "https://github.com/SMSDAO/Cinemai/blob/main/docs/api",
     icon: Code2,
     color: "text-accent",
+    external: true,
   },
   {
     title: "Mobile Build Guide",
     description: "iOS and Android build setup for the CinemAi mobile application.",
-    href: "/MOBILE_BUILD_GUIDE.md",
+    href: "https://github.com/SMSDAO/Cinemai/blob/main/MOBILE_BUILD_GUIDE.md",
     icon: FileText,
     color: "text-yellow-400",
+    external: true,
   },
   {
     title: "Security & Privacy",
@@ -38,13 +42,15 @@ const docLinks = [
     href: "/policy/likeness",
     icon: Shield,
     color: "text-green-400",
+    external: false,
   },
   {
     title: "Setup Guide",
     description: "Local development setup, environment variables, and prerequisites.",
-    href: "/SETUP.md",
+    href: "https://github.com/SMSDAO/Cinemai/blob/main/SETUP.md",
     icon: FileText,
     color: "text-primary",
+    external: true,
   },
 ];
 
@@ -63,7 +69,7 @@ export default function DocsPage() {
         {/* Quick Links */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {docLinks.map((doc) => (
-            <Link key={doc.title} href={doc.href} target={doc.href.startsWith("http") ? "_blank" : undefined}>
+            <Link key={doc.title} href={doc.href} target={doc.external ? "_blank" : undefined} rel={doc.external ? "noopener noreferrer" : undefined}>
               <NeoGlowCard className="cursor-pointer hover:scale-[1.02] transition-transform h-full">
                 <div className="flex items-start gap-3">
                   <doc.icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${doc.color}`} />

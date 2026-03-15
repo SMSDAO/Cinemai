@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: app-nextjs/package-lock.json
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@50.32.5
 
       - name: Pull Vercel environment info
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}

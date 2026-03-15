@@ -22,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Settings Page** (`/settings`) — profile editor, notification toggles, password change, appearance selector, language/region selector
 - **Docs Page** (`/docs`) — documentation index, external resource links, API quick reference with link to developer console
 - **Navigation component** (`components/navigation.tsx`) — sticky tab-based nav with 7 tabs: Home, Dashboard, Users, Admin, Developer, Settings, Docs; keyboard-accessible, responsive, mobile-scrollable
-- **API health endpoint** (`/api/health`) — returns `{ status, timestamp, version, uptime }`
-- **API metrics endpoint** (`/api/metrics`) — returns request stats, latency percentiles, and system info
+- **API health endpoint** (`/api/health`) — returns `{ status, timestamp, version }` (Edge Runtime); version sourced from `NEXT_PUBLIC_APP_VERSION` env var
+- **API metrics endpoint** (`/api/metrics`) — returns `{ timestamp, version, requests: { total, errors, rate_per_minute }, performance: { p50_latency_ms, p95_latency_ms, p99_latency_ms } }` (Edge Runtime); version sourced from `NEXT_PUBLIC_APP_VERSION` env var
 - **PWA manifest** (`public/manifest.json`) — installable web app with Neo Glow theme color
 
 #### Layout & Navigation

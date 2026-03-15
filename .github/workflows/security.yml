@@ -67,7 +67,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detect secrets with git-secrets patterns
+      - name: Scan source for hardcoded credentials
         run: |
           # Check for common secret patterns
           if git log --all --full-history -- '*.env' | grep -q "^commit"; then
@@ -79,5 +79,5 @@ jobs:
             --exclude-dir=node_modules --exclude-dir=.git .; then
             echo "Warning: Potential hardcoded secrets detected"
           fi
-          echo "Secret scan complete"
+          echo "Credential scan complete"
         continue-on-error: true
