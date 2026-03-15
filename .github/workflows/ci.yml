@@ -13,6 +13,8 @@ jobs:
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     defaults:
       run:
         working-directory: backend
@@ -32,6 +34,10 @@ jobs:
   frontend-build:
     name: Frontend Build
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://ci:ci@localhost:5432/cinemai' }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-placeholder-secret' }}
+      NEXTAUTH_URL: 'http://localhost:3000'
     defaults:
       run:
         working-directory: app-nextjs
@@ -44,7 +50,3 @@ jobs:
           cache-dependency-path: app-nextjs/package-lock.json
       - run: npm ci
       - run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://user:pass@localhost:5432/cinemai' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-placeholder-secret' }}
-          NEXTAUTH_URL: 'http://localhost:3000'
