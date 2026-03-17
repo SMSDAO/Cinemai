@@ -23,7 +23,7 @@ const docLinks = [
   {
     title: "API Reference",
     description: "REST API endpoints, authentication, and request/response examples.",
-    href: "https://github.com/SMSDAO/Cinemai/blob/main/docs/api",
+    href: "https://github.com/SMSDAO/Cinemai/tree/main/docs/api",
     icon: Code2,
     color: "text-accent",
     external: true,

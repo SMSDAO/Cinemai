@@ -28,7 +28,7 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+    <nav aria-label="Primary" className="border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 flex items-center gap-2 h-14">
         {/* Logo */}
         <Link href="/" aria-label="CinemAi home" className="flex items-center gap-2 mr-6 flex-shrink-0">
