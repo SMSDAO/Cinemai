@@ -78,4 +78,3 @@ jobs:
             exit 1
           fi
           echo "Credential scan complete — no issues found"
-        continue-on-error: true

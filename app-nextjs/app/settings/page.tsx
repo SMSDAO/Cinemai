@@ -23,21 +23,21 @@ export default function SettingsPage() {
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Display Name</label>
+                <label htmlFor="display-name" className="text-sm text-muted-foreground mb-1 block">Display Name</label>
                 <input
+                  id="display-name"
                   type="text"
                   defaultValue="Alice Chen"
                   className="w-full bg-muted/50 border border-border/50 rounded-md px-3 py-2 text-sm"
-                  aria-label="Display name"
                 />
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+                <label htmlFor="email" className="text-sm text-muted-foreground mb-1 block">Email</label>
                 <input
+                  id="email"
                   type="email"
                   defaultValue="alice@example.com"
                   className="w-full bg-muted/50 border border-border/50 rounded-md px-3 py-2 text-sm"
-                  aria-label="Email address"
                 />
               </div>
             </div>
@@ -75,21 +75,21 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Current Password</label>
+                <label htmlFor="current-password" className="text-sm text-muted-foreground mb-1 block">Current Password</label>
                 <input
+                  id="current-password"
                   type="password"
                   placeholder="••••••••"
                   className="w-full bg-muted/50 border border-border/50 rounded-md px-3 py-2 text-sm"
-                  aria-label="Current password"
                 />
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-1 block">New Password</label>
+                <label htmlFor="new-password" className="text-sm text-muted-foreground mb-1 block">New Password</label>
                 <input
+                  id="new-password"
                   type="password"
                   placeholder="••••••••"
                   className="w-full bg-muted/50 border border-border/50 rounded-md px-3 py-2 text-sm"
-                  aria-label="New password"
                 />
               </div>
               <NeoGlowButton size="sm" variant="outline">Update Password</NeoGlowButton>
