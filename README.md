@@ -128,6 +128,17 @@ The web frontend is automatically deployed to Vercel:
 
 For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md).
 
+## UI Preview
+
+### User Dashboard
+![User Dashboard](docs/assets/ui/user-dashboard.png)
+
+### Admin Dashboard
+![Admin Dashboard](docs/assets/ui/admin-dashboard.png)
+
+### Developer Dashboard
+![Developer Dashboard](docs/assets/ui/developer-dashboard.png)
+
 ## 📄 License
 
 See [LICENSE](./LICENSE) for more information.

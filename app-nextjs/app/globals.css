@@ -143,4 +143,10 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
