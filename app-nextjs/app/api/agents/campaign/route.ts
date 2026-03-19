@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 // Force dynamic rendering
@@ -106,10 +107,10 @@ export async function POST(request: NextRequest) {
       data: {
         userId,
         videoId: body.videoId,
-        platforms: body.platforms as any,
+        platforms: body.platforms as string[],
         scheduleTime,
         status: scheduleTime ? 'scheduled' : 'draft',
-        logs: [] as any,
+        logs: [],
       },
     });
     
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
     await prisma.campaign.update({
       where: { id: campaign.id },
       data: {
-        logs: postResults as any,
+        logs: postResults as unknown as Prisma.InputJsonValue,
         status: scheduleTime ? 'scheduled' : 'published',
       },
     });
@@ -142,17 +143,17 @@ export async function POST(request: NextRequest) {
         createdAt: campaign.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Campaign creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create campaign', details: error.message },
+      { error: 'Failed to create campaign', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
 }
 
 // GET /api/agents/campaign - List all campaigns for user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Mock user ID (in production, get from NextAuth session)
     const userId = 'demo-user';
@@ -190,10 +191,10 @@ export async function GET(request: NextRequest) {
         createdAt: c.createdAt,
       })),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Campaign list error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch campaigns', details: error.message },
+      { error: 'Failed to fetch campaigns', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

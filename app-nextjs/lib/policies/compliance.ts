@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 export interface ComplianceResult {
   compliant: boolean;
   reason?: string;
@@ -94,9 +96,9 @@ export async function logComplianceCheck(
       action: result.compliant ? 'compliance_check_passed' : 'compliance_check_failed',
       payload: {
         prompt: prompt.substring(0, 500), // Truncate for storage
-        result: result as any,
+        result: result as unknown as Prisma.InputJsonValue,
         timestamp: new Date().toISOString()
-      } as any
+      } as unknown as Prisma.InputJsonValue
     }
   });
 }

@@ -147,7 +147,7 @@ export default function LikenessPolicyPage() {
               <h3 className="text-lg font-semibold mb-2">Automated Checks</h3>
               <p className="text-muted-foreground">
                 Our platform uses automated systems to detect and block attempts to impersonate
-                real people or violate this policy. If your request is blocked, you'll receive
+                real people or violate this policy. If your request is blocked, you&apos;ll receive
                 an error message with suggestions.
               </p>
             </div>
@@ -179,7 +179,7 @@ export default function LikenessPolicyPage() {
           <h2 className="text-2xl font-bold mb-4">Legal Considerations</h2>
           <div className="space-y-4 text-muted-foreground">
             <p>
-              <strong>Right of Publicity:</strong> Using someone's likeness without permission may
+              <strong>Right of Publicity:</strong> Using someone&apos;s likeness without permission may
               violate their right of publicity, which protects individuals from unauthorized
               commercial use of their identity.
             </p>
@@ -212,7 +212,7 @@ export default function LikenessPolicyPage() {
           <div className="bg-card p-6 rounded-lg border text-center">
             <h3 className="text-xl font-bold mb-4">Policy Acknowledgment</h3>
             <p className="text-muted-foreground mb-6">
-              By clicking "I Accept" below, you acknowledge that you have read, understood,
+              By clicking &quot;I Accept&quot; below, you acknowledge that you have read, understood,
               and agree to comply with this Likeness & Consent Policy.
             </p>
             <div className="flex gap-4 justify-center">
