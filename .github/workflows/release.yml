@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = '${{ steps.version.outputs.VERSION }}';
+            const { data: release } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `Release ${tag}`,
+              body: tag === 'v1.0.0'
+                ? 'Production Ready Enterprise Release\n\nSee [CHANGELOG.md](CHANGELOG.md) for full details.'
+                : `Release ${tag}\n\nSee [CHANGELOG.md](CHANGELOG.md) for full details.`,
+              draft: false,
+              prerelease: tag.includes('-'),
+            });
+            console.log(`Created release: ${release.html_url}`);

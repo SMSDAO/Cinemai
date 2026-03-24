@@ -9,7 +9,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's your activity overview.</p>
+          <p className="text-muted-foreground">Welcome back! Here&apos;s your activity overview.</p>
         </div>
 
         {/* Quick Actions */}
