@@ -166,7 +166,7 @@ export default function PricingPage() {
               <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
               <p className="text-sm text-muted-foreground">
                 Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately,
-                and we'll prorate the charges.
+                and we&apos;ll prorate the charges.
               </p>
             </NeoGlowCard>
 

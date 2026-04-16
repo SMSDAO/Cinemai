@@ -1,0 +1,84 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-backend:
+    name: Dependency audit – backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+  audit-web:
+    name: Dependency audit – web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app-nextjs
+    env:
+      DATABASE_URL: postgresql://localhost:5432/db?schema=public
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: app-nextjs/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+  secret-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan source for hardcoded credentials
+        run: |
+          # Check for common secret patterns
+          if git log --all --full-history -- '*.env' | grep -q "^commit"; then
+            echo "Warning: .env files found in git history"
+          fi
+          # Scan for potential secrets — print only file paths, not matched values.
+          # Excludes test/spec files (which use placeholder credentials by design).
+          # Uses negative lookbehind (?<!\.) to skip property-access assignments
+          # like `errors.password = 'message'` which are not credentials.
+          if grep -rlP "(?<!\.)\b(password|secret|api_key|apikey|token)\s*=\s*['\"][^'\"]{8,}" \
+            --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" \
+            --exclude="*.spec.ts" --exclude="*.spec.js" --exclude="*.test.ts" --exclude="*.test.js" \
+            --exclude-dir=node_modules --exclude-dir=.git .; then
+            echo "Warning: Potential hardcoded secrets detected in the files listed above"
+            exit 1
+          fi
+          echo "Credential scan complete — no issues found"
