@@ -12,7 +12,7 @@ interface VideoGenerationRequest {
 }
 
 // Mock video provider integration
-async function createVideoJob(params: VideoGenerationRequest) {
+async function createVideoJob() {
   // In production, integrate with actual video provider API
   // For now, return a mock job ID
   return {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create video job with provider
-    const job = await createVideoJob(body);
+    const job = await createVideoJob();
     
     // Save to database
     const video = await prisma.video.create({
@@ -77,17 +77,17 @@ export async function POST(request: NextRequest) {
         createdAt: video.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Video generation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create video', details: error.message },
+      { error: 'Failed to create video', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
 }
 
 // GET /api/agents/video - List all videos for user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Mock user ID (in production, get from NextAuth session)
     const userId = 'demo-user';
@@ -118,10 +118,10 @@ export async function GET(request: NextRequest) {
         createdAt: v.createdAt,
       })),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Video list error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch videos', details: error.message },
+      { error: 'Failed to fetch videos', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

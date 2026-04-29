@@ -45,6 +45,8 @@ jobs:
     defaults:
       run:
         working-directory: app-nextjs
+    env:
+      DATABASE_URL: postgresql://localhost:5432/db?schema=public
     steps:
       - uses: actions/checkout@v4
 
@@ -53,9 +55,7 @@ jobs:
           node-version: '24'
           cache: 'npm'
           cache-dependency-path: app-nextjs/package-lock.json
-        run: npm ci
-        env:
-          DATABASE_URL: postgresql://localhost:5432/db?schema=public
+
       - name: Install dependencies
         run: npm ci
 
@@ -64,8 +64,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          DATABASE_URL: postgresql://localhost:5432/db?schema=public
 
   mobile:
     name: Mobile – lint & test
@@ -83,7 +81,7 @@ jobs:
           cache-dependency-path: mobile/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Lint
         run: npm run lint

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { checkLikenessCompliance, logComplianceCheck } from '@/lib/policies/compliance';
 
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId,
         title: `${body.product} - ${body.template || 'Script'}`,
-        content: scriptContent as any,
+        content: scriptContent as unknown as Prisma.InputJsonValue,
       },
     });
     
@@ -124,17 +125,17 @@ export async function POST(request: NextRequest) {
         createdAt: script.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Script generation error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate script', details: error.message },
+      { error: 'Failed to generate script', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
 }
 
 // GET /api/agents/script - List all scripts for user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Mock user ID (in production, get from NextAuth session)
     const userId = 'demo-user';
@@ -154,10 +155,10 @@ export async function GET(request: NextRequest) {
         createdAt: s.createdAt,
       })),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Script list error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch scripts', details: error.message },
+      { error: 'Failed to fetch scripts', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
