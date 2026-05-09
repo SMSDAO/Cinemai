@@ -20,26 +20,44 @@ jobs:
       mobile_source: ${{ steps.filter.outputs.mobile_source }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-              - '.github/workflows/ci.yml'
-            web:
-              - 'app-nextjs/**'
-              - '.github/workflows/ci.yml'
-            mobile:
-              - 'mobile/**'
-              - '.github/workflows/ci.yml'
-            mobile_source:
-              - 'mobile/src/**'
-              - 'mobile/**/*.ts'
-              - 'mobile/**/*.tsx'
-              - 'mobile/**/*.js'
-              - 'mobile/**/*.jsx'
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
+            echo "mobile=true" >> "$GITHUB_OUTPUT"
+            echo "mobile_source=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" > changed_files.txt
+
+          if grep -Eq '^backend/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^app-nextjs/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "web=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "web=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^mobile/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "mobile=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "mobile=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^mobile/src/|^mobile/.*\.(ts|tsx|js|jsx)$' changed_files.txt; then
+            echo "mobile_source=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "mobile_source=false" >> "$GITHUB_OUTPUT"
+          fi
 
   backend:
     name: Backend – lint & test
