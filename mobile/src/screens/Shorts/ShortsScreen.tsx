@@ -51,7 +51,7 @@ export const ShortsScreen = () => {
       const generatedHooks = await generateHooks(short.id, idea);
       setHooks(generatedHooks);
       Alert.alert('Success', `Generated ${generatedHooks.length} hooks!`);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to generate hooks');
     }
   };
@@ -65,7 +65,7 @@ export const ShortsScreen = () => {
     try {
       Alert.alert('Success', 'Generating variants...');
       // TODO: Navigate to variant preview
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to create variants');
     }
   };

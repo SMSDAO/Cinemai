@@ -52,7 +52,7 @@ export const CinemaProScreen = () => {
       setScript('');
       setPhotoUrl('');
       setSelectedStyle(null);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to create production');
     }
   };

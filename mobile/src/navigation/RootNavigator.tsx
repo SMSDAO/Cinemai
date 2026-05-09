@@ -4,16 +4,12 @@
  */
 
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import { AuthStack } from './AuthStack';
 import { OnboardingStack } from './OnboardingStack';
 import { MainAppTabs } from './MainAppTabs';
-import { AdminStack } from './AdminStack';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors } from '../theme/tokens';
-
-const Stack = createStackNavigator();
 
 export const RootNavigator: React.FC = () => {
   const { user, isLoading, isAuthenticated } = useAuth();

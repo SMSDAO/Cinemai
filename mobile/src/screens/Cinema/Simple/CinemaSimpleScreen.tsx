@@ -36,7 +36,7 @@ export const CinemaSimpleScreen = () => {
       setTitle('');
       setScript('');
       setPhotoUrl('');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to create production');
     }
   };

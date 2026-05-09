@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { Avatar, Tabs, NeoGlowCard, NeoGlowButton, Skeleton } from '../../components';
+import { Avatar, Tabs, NeoGlowButton, Skeleton } from '../../components';
 import { colors, spacing, typography } from '../../theme/tokens';
 
 export const ProfileScreen: React.FC = () => {

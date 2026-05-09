@@ -33,7 +33,7 @@ export const LoginScreen: React.FC = () => {
     try {
       await login(email, password);
       showToast('Login successful!', 'success');
-    } catch (error) {
+    } catch {
       showToast('Login failed. Please check your credentials.', 'error');
     } finally {
       setLoading(false);
