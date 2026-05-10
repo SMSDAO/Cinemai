@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/Toast/ToastContext';
 import { Input, NeoGlowButton, Avatar } from '../../components';
@@ -30,7 +29,6 @@ const INTEREST_OPTIONS = [
 ];
 
 export const OnboardingScreen: React.FC = () => {
-  const navigation = useNavigation();
   const { user, refreshUser } = useAuth();
   const { showToast } = useToast();
 

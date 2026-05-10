@@ -10,9 +10,60 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      web: ${{ steps.filter.outputs.web }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      mobile_source: ${{ steps.filter.outputs.mobile_source }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
+            echo "mobile=true" >> "$GITHUB_OUTPUT"
+            echo "mobile_source=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" > changed_files.txt
+
+          if grep -Eq '^backend/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^app-nextjs/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "web=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "web=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^mobile/|^\.github/workflows/ci\.yml$' changed_files.txt; then
+            echo "mobile=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "mobile=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -Eq '^mobile/src/|^mobile/.*\.(ts|tsx|js|jsx)$' changed_files.txt; then
+            echo "mobile_source=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "mobile_source=false" >> "$GITHUB_OUTPUT"
+          fi
+
   backend:
     name: Backend – lint & test
     runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
     defaults:
       run:
         working-directory: backend
@@ -42,6 +93,8 @@ jobs:
   web:
     name: Web (app-nextjs) – lint & build
     runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.web == 'true'
     defaults:
       run:
         working-directory: app-nextjs
@@ -68,6 +121,8 @@ jobs:
   mobile:
     name: Mobile – lint & test
     runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.mobile == 'true'
     defaults:
       run:
         working-directory: mobile
@@ -84,9 +139,11 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Lint
+        if: github.event_name != 'pull_request' || needs.changes.outputs.mobile_source == 'true'
         run: npm run lint
 
       - name: Type-check
+        if: github.event_name != 'pull_request' || needs.changes.outputs.mobile_source == 'true'
         run: npm run type-check
 
       - name: Test

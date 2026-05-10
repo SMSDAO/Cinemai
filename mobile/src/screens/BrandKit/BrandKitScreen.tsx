@@ -70,7 +70,7 @@ export const BrandKitScreen = () => {
       Alert.alert('Success', 'Brand kit saved!');
       setName('');
       setLogoUrl('');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save brand kit');
     }
   };

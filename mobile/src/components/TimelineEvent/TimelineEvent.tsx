@@ -57,7 +57,6 @@ const getEventColor = (type: EventType): string => {
 };
 
 const getEventDescription = (event: TimelineEventType): string => {
-  const userName = event.user?.name || event.metadata?.userName || 'Someone';
   const title = event.metadata?.title || '';
 
   switch (event.eventType) {

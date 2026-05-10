@@ -64,7 +64,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
           },
         },
       ]);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to change password. Please try again.');
     } finally {
       setIsLoading(false);
